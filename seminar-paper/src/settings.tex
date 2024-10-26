@@ -1,0 +1,36 @@
+% List of packages and settings
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{eucal}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage{listings}
+\usepackage[printonlyused]{acronym}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{multicol}
+\usepackage{hyphenat}
+
+% Set graphics path
+\graphicspath{{../figures/}}
+
+% URL style
+\urlstyle{tt}
+
+% Separation between list items
+\setlength{\itemsep}{0ex plus0.2ex}
+
+% Fancy headers
+\setlength{\headsep}{8mm}
+\pagestyle{fancyplain}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\lhead[\fancyplain{}{\thepage}]{\fancyplain{}{\slshape \rightmark}}
+\rhead[\fancyplain{}{\slshape \leftmark}]{\fancyplain{}{\thepage}}
+\cfoot{}

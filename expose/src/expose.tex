@@ -1,0 +1,64 @@
+\documentclass{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[USenglish]{babel}
+\usepackage{datetime}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{graphicx}
+
+\title{Seminar Exposé}
+\subtitle{Title: Side-Channel Resistant Implementations of Post-Quantum Cryptography (PQC)}
+\author{Luis Falke}
+\date{\today}
+
+\hypersetup{
+    pdftitle={Exposé for Seminar Paper},
+    pdfauthor={Luis Falke, luis.falke@ruhr-uni-bochum.de},
+    pdfsubject={Side-Channel Resistant PQC},
+    pdfkeywords={Exposé, PQC, Side-Channel Attacks, Cryptography, Quantum-Resistant},
+    unicode=true
+}
+
+\begin{document}
+
+\maketitle
+
+\section*{Supervision}
+\begin{tabular}{ll}
+	Supervisor: & Georg Land \\
+\end{tabular}
+
+\section*{Motivation}
+The advent of quantum computing presents a critical challenge to existing cryptographic systems, especially for widely deployed public-key algorithms, which are vulnerable to quantum-based attacks. In response, the National Institute of Standards and Technology (NIST) initiated a standardization process to develop post-quantum cryptographic (PQC) algorithms resistant to quantum adversaries. However, an additional layer of security is necessary for these algorithms to withstand side-channel attacks (SCAs), such as power analysis, which can leak sensitive information during cryptographic operations.
+
+The focus of this thesis is on exploring side-channel-resistant implementations for PQC, particularly lattice-based schemes like Kyber and Dilithium, which are currently favored in the NIST PQC competition. These implementations are designed for embedded systems, where vulnerabilities to SCAs are particularly high due to constrained computational resources and power limits. Papers such as \cite{Bos21} provide crucial insights into first- and higher-order masking techniques essential for securing Kyber against SCAs. Another valuable work, \cite{Azouaoui22}, presents effective countermeasures and sensitivity analyses for lattice-based digital signatures like Dilithium, highlighting the effectiveness of masking and bitslicing techniques in reducing vulnerabilities.
+
+\section*{Goals}
+The primary goal of this thesis is to examine, compare, and evaluate existing side-channel-resistant implementations for PQC algorithms on embedded systems. Key objectives include:
+
+\begin{itemize}
+	\item \textbf{Literature Review:} Conduct an in-depth review of existing PQC algorithms and side-channel-resistant techniques.
+	\item \textbf{Implementation Analysis:} Assess the feasibility and performance of first- and higher-order masking, bitslicing, and other countermeasures for PQC on devices like ARM Cortex-M4.
+	\item \textbf{Benchmarking and Evaluation:} Compare various implementations of Kyber and Dilithium based on their resistance to SCAs, computational overhead, and practicality in constrained environments.
+	\item \textbf{Visualization and Comparison:} Create comprehensive visual comparisons to illustrate the trade-offs in efficiency and security across different masking approaches and their impact on power analysis and timing leakage.
+\end{itemize}
+
+The outcomes will offer insights into the practical challenges and potential solutions in developing secure, efficient post-quantum cryptographic systems for real-world applications.
+
+\section*{Outline}
+\begin{itemize}
+	\item \textbf{Introduction and Motivation:} Overview of PQC and its importance in the quantum era. Introduction to side-channel attacks and the necessity for resistant implementations.
+	\item \textbf{Literature Review:} Summary of relevant papers on Kyber, Dilithium, and SCA countermeasures, including \cite{Bos21} and \cite{Azouaoui22}.
+	\item \textbf{Methodology:} Description of the analysis and evaluation process for various SCA countermeasures in PQC.
+	\item \textbf{Results and Discussion:} Comparative analysis and benchmarking results of Kyber and Dilithium implementations, examining the performance, security, and feasibility of each approach.
+	\item \textbf{Conclusion and Future Work:} Summary of findings and potential directions for further research in securing PQC against side-channel attacks.
+\end{itemize}
+
+\section*{Preliminary Literature}
+\bibliographystyle{plain}
+\bibliography{bibtex}
+
+\end{document}

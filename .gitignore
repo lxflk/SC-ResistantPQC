@@ -1,0 +1,26 @@
+# Ignore LaTeX auxiliary files
+**/*.aux
+**/*.bbl
+**/*.blg
+**/*.fdb_latexmk
+**/*.fls
+**/*.lof
+**/*.log
+**/*.lot
+**/*.out
+**/*.synctex.gz
+**/*.toc
+
+# Ignore PDF outputs
+**/*.pdf
+
+# Ignore build directories
+**/build
+**/output
+
+# Ignore specific figures
+**/figures/*.eps
+**/figures/*-eps-converted-to.pdf
+
+# Ignore macOS system files
+.DS_Store
