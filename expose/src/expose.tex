@@ -32,29 +32,35 @@
 \end{tabular}
 
 \section*{Motivation}
-The advent of quantum computing presents a critical challenge to existing cryptographic systems, especially for widely deployed public-key algorithms, which are vulnerable to quantum-based attacks. In response, the National Institute of Standards and Technology (NIST) initiated a standardization process to develop post-quantum cryptographic (PQC) algorithms resistant to quantum adversaries. However, an additional layer of security is necessary for these algorithms to withstand side-channel attacks (SCAs), such as power analysis, which can leak sensitive information during cryptographic operations.
+The advent of quantum computing presents a critical challenge to existing cryptographic systems, especially for widely deployed public-key algorithms, which are vulnerable to quantum-based attacks. In response, the National Institute of Standards and Technology (NIST) initiated a standardization process to develop post-quantum cryptographic (PQC) algorithms resistant to quantum adversaries. However, these new algorithms must also be secure against classical attack vectors, including side-channel attacks (SCAs), such as power analysis and electromagnetic analysis, which can leak sensitive information during cryptographic operations.
 
-The focus of this thesis is on exploring side-channel-resistant implementations for PQC, particularly lattice-based schemes like Kyber and Dilithium, which are currently favored in the NIST PQC competition. These implementations are designed for embedded systems, where vulnerabilities to SCAs are particularly high due to constrained computational resources and power limits. Papers such as \cite{Bos21} provide crucial insights into first- and higher-order masking techniques essential for securing Kyber against SCAs. Another valuable work, \cite{Azouaoui22}, presents effective countermeasures and sensitivity analyses for lattice-based digital signatures like Dilithium, highlighting the effectiveness of masking and bitslicing techniques in reducing vulnerabilities.
+Side-channel resistance is particularly important for implementations on embedded devices, where resources are constrained, and physical access by attackers is more feasible. Lattice-based schemes like Kyber and Dilithium have emerged as leading candidates in the NIST PQC standardization process due to their favorable performance and security properties. However, their resistance to SCAs is an active area of research.
+
+Several studies have explored side-channel countermeasures for these schemes. Migliore et al.\ \cite{Migliore19} investigated masking techniques for Dilithium, providing efficient implementations and side-channel evaluations. Heinz et al.\ \cite{Heinz20} presented a first-order masked implementation of Kyber on ARM Cortex-M4, demonstrating practical side-channel resistance on embedded platforms. Further advancements include higher-order masking schemes \cite{Bos21}, improved masking gadgets \cite{Coron23}, and bitslicing techniques for efficient arithmetic/Boolean masking conversions \cite{Bronchain22}. Azouaoui et al.\ \cite{Azouaoui22} revisited the sensitivity analysis of Dilithium and proposed improved implementations to enhance its side-channel resistance.
+
+Understanding the feasibility and performance of these side-channel resistant implementations is crucial for real-world deployment. This seminar paper aims to systematically analyze and compare existing implementations, focusing on their practicality, security level, and performance overhead on embedded devices.
 
 \section*{Goals}
-The primary goal of this thesis is to examine, compare, and evaluate existing side-channel-resistant implementations for PQC algorithms on embedded systems. Key objectives include:
+The primary goal of this seminar paper is to examine, compare, and evaluate existing side-channel resistant implementations of post-quantum cryptographic schemes on embedded systems. The key objectives are:
 
 \begin{itemize}
-	\item \textbf{Literature Review:} Conduct an in-depth review of existing PQC algorithms and side-channel-resistant techniques.
-	\item \textbf{Implementation Analysis:} Assess the feasibility and performance of first- and higher-order masking, bitslicing, and other countermeasures for PQC on devices like ARM Cortex-M4.
-	\item \textbf{Benchmarking and Evaluation:} Compare various implementations of Kyber and Dilithium based on their resistance to SCAs, computational overhead, and practicality in constrained environments.
-	\item \textbf{Visualization and Comparison:} Create comprehensive visual comparisons to illustrate the trade-offs in efficiency and security across different masking approaches and their impact on power analysis and timing leakage.
+	\item \textbf{Introduction of Key Concepts:} Provide a comprehensive overview of the most important aspects affecting the feasibility and performance of side-channel resistant implementations of post-quantum schemes, including masking techniques, bitslicing, and hardware considerations.
+	\item \textbf{Comparative Analysis:} Visualize, compare, and discuss existing implementations of PQC schemes like Kyber and Dilithium with respect to their side-channel resistance, performance metrics, and resource utilization on embedded devices.
+	\item \textbf{Evaluation of Countermeasures:} Assess the effectiveness of various side-channel countermeasures, such as first-order and higher-order masking, in protecting against different types of SCAs.
+	\item \textbf{Identification of Trade-offs:} Highlight the trade-offs between security and efficiency in side-channel resistant implementations, providing insights into optimal strategies for secure and performant PQC deployments.
 \end{itemize}
 
-The outcomes will offer insights into the practical challenges and potential solutions in developing secure, efficient post-quantum cryptographic systems for real-world applications.
+The outcomes will offer valuable insights into the practical challenges and potential solutions in developing secure, efficient post-quantum cryptographic systems for embedded applications.
 
 \section*{Outline}
 \begin{itemize}
 	\item \textbf{Introduction and Motivation:} Overview of PQC and its importance in the quantum era. Introduction to side-channel attacks and the necessity for resistant implementations.
-	\item \textbf{Literature Review:} Summary of relevant papers on Kyber, Dilithium, and SCA countermeasures, including \cite{Bos21} and \cite{Azouaoui22}.
-	\item \textbf{Methodology:} Description of the analysis and evaluation process for various SCA countermeasures in PQC.
-	\item \textbf{Results and Discussion:} Comparative analysis and benchmarking results of Kyber and Dilithium implementations, examining the performance, security, and feasibility of each approach.
-	\item \textbf{Conclusion and Future Work:} Summary of findings and potential directions for further research in securing PQC against side-channel attacks.
+	\item \textbf{Background:} Detailed explanation of side-channel attacks, including power and electromagnetic analysis, and common countermeasures such as masking and bitslicing.
+	\item \textbf{Literature Review:} Summary and analysis of relevant papers on side-channel resistant implementations of Kyber and Dilithium, including \cite{Migliore19}, \cite{Heinz20}, \cite{Bos21}, \cite{Azouaoui22}, \cite{Coron23}, and \cite{Bronchain22}.
+	\item \textbf{Comparison Criteria:} Definition of the criteria used for comparing implementations, such as security level (order of masking), performance metrics (execution time, memory usage), and practicality (ease of implementation, scalability).
+	\item \textbf{Comparative Analysis:} Visual comparison and discussion of the implementations, highlighting their strengths and weaknesses regarding the defined criteria.
+	\item \textbf{Discussion of Trade-offs:} Examination of the trade-offs between security and performance, and how different approaches address these challenges.
+	\item \textbf{Conclusion and Future Work:} Summary of findings, implications for the deployment of PQC in embedded systems, and suggestions for future research directions.
 \end{itemize}
 
 \section*{Preliminary Literature}
