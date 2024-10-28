@@ -1,23 +1,7 @@
-% EMSEC seminar template, 24.09.2010
-% david.oswald@rub.de
-%
-% based on
-% EMSEC thesis template, 13.09.2010
-%
-% Calls all chapters
-% Each chapter is contained in a separate "\input" file
-% Style: doublesided, scrreport, dina4
-%
-% Benedikt Driessen, 2010
-% benedikt.driessen@rub.de
-%
+% EMSEC seminar template
+% Modified for your seminar paper
 
-% *************************************************************
-% ENTER INFORMATION ABOUT AUTHOR, TITLE and TYPE HERE
-\newcommand{\thauthor}{Forename Surname}
-\newcommand{\thtitle}{Title}
-% *************************************************************
-
+% Set author and title in settings.tex
 \documentclass[a4paper,12pt,twoside,openany,headsepline,bibliography=totocnumbered]{scrbook}
 
 % Import settings, packages, etc.
@@ -30,19 +14,7 @@
 
 % Abstract
 \section*{Abstract}
-The following text\footnote{Shamelessly ripped from \url{http://www.leeds.ac.uk/educol/abstract.htm}} describes what your abstract should be about.
-
-The following text\footnote{Shamelessly ripped from \url{http://www.leeds.ac.uk/educol/abstract.htm}} describes what your abstract should be about.
-
-The abstract should convey to the reader concisely and accurately within the space of a few sentences, the claim to knowledge that the authors are making. It should indicate the boundaries of space and time within which the enquiry has occurred. If there is a claim to generality beyond the boundaries of the enquiry the basis of that claim should be given, for example that a random sample is thought to be representative of a larger population. There should also be a hint of the method of enquiry.
-
-The boundaries of an enquiry are important - and are unfortunately too often omitted from abstracts. This is due to the regrettable tendency for researchers to generalise their results from, for example, a few schools to all schools, and to imply that what was true at a particular time, is true for all time. Some reference to the geographical location of the children, or teachers, or schools on whom the claim to knowledge rests should be made. Because of the international nature of the research community it is worth making clear in what country the research took place. Also the period in which the data was collected should be stated.
-
-The abstract should be a condensation of the substance of the paper, not a trailer, nor an introduction. Journals and thesis regulations usually put a limit of around 200 to 300 words to the length of an abstract. “Trailer” is a term borrowed from the cinema industry to describe a showing of a few highlights in order to win an audience. An “Introduction” tells that something is coming, but doesn’t reveal its substance. These are not what is needed.
-
-Abstracts are recycled in abstract journals and electronic networks and provide the main vehicle for other researchers to become aware of particular studies. Hence the more clearly they convey the claim to knowledge of the original paper the more useful they are in helping the reader to decide whether it is worth taking the trouble to obtain and read the original and possibly cite it in his/her own writing.
-
-Both the abstract and the paper should make sense without the other.
+The advent of quantum computing presents a critical challenge to existing cryptographic systems. Post-Quantum Cryptography (PQC) aims to develop cryptographic algorithms resistant to quantum-based attacks. However, these algorithms must also be secure against classical side-channel attacks (SCAs). This paper systematically analyzes and compares existing side-channel resistant implementations of PQC schemes, focusing on their practicality, security level, and performance overhead on embedded devices.
 
 \clearpage
 
@@ -53,18 +25,19 @@ Both the abstract and the paper should make sense without the other.
 \chapter*{Acronyms}
 \begin{acronym}
     \setlength{\itemsep}{0.2em}
-    \acro{ACR}{ACRONYM1}
-    % etc.
+    \acro{PQC}{Post-Quantum Cryptography}
+    \acro{SCA}{Side-Channel Attack}
+    \acro{NIST}{National Institute of Standards and Technology}
+    \acro{KEM}{Key Encapsulation Mechanism}
+    % Add more as needed
 \end{acronym}
 
 % Include all your chapters as .tex files
 \pagenumbering{arabic}
 
 \input{introduction}
-%\input{theory}
-%\input{design}
-%\input{implementation}
-%\input{results}
+\input{background}
+\input{analysis}
 \input{conclusion}
 
 % Generate list of figures
@@ -80,7 +53,7 @@ Both the abstract and the paper should make sense without the other.
 \backmatter
 
 % Generate bibliography with BibTeX
-\bibliographystyle{alpha}
+\bibliographystyle{plain}
 \bibliography{bibliography}
 
 \end{document}

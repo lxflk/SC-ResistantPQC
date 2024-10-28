@@ -1,0 +1,27 @@
+\chapter{Analysis}
+
+\section{Methodology}
+
+In this section, we define the criteria for comparing side-channel resistant implementations of PQC schemes. The criteria include:
+
+\begin{itemize}
+    \item \textbf{Security Level:} The order of masking used in the implementation, indicating its resistance to SCAs.
+    \item \textbf{Performance Metrics:} Execution time, memory usage, and computational overhead associated with the implementation.
+    \item \textbf{Practicality:} Ease of implementation, scalability, and resource utilization on embedded devices.
+\end{itemize}
+
+We will use these criteria to systematically compare existing implementations and assess their suitability for real-world applications.
+
+\section{Comparative Analysis}
+
+Using the defined criteria, we compare the following implementations:
+
+\begin{itemize}
+    \item \textbf{Migliore et al.\ \cite{Migliore19}:} Masking techniques for Dilithium.
+    \item \textbf{Heinz et al.\ \cite{Heinz20}:} First-order masked Kyber on ARM Cortex-M4.
+    \item \textbf{Bos et al.\ \cite{Bos21}:} Higher-order masking implementations of Kyber.
+    \item \textbf{Coron et al.\ \cite{Coron23}:} Improved gadgets for high-order masking.
+    \item \textbf{Bronchain and Cassiers \cite{Bronchain22}:} Bitslicing arithmetic/Boolean masking conversions.
+\end{itemize}
+
+We will present visual comparisons, such as tables and graphs, to illustrate the performance and security trade-offs among these implementations.

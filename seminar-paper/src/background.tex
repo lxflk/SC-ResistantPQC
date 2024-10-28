@@ -1,0 +1,22 @@
+\chapter{Background}
+
+\section{Post-Quantum Cryptography and Quantum Threats}
+
+Post-Quantum Cryptography (PQC) refers to cryptographic algorithms that are secure against attacks using quantum computers. With the advent of quantum computing, traditional public-key cryptosystems like RSA and ECC become vulnerable due to algorithms like Shor's algorithm. PQC aims to develop new cryptographic schemes that can withstand quantum attacks while maintaining efficiency on classical computers.
+
+\section{Side-Channel Attacks}
+
+Side-Channel Attacks (SCAs) exploit physical leakages from cryptographic devices, such as power consumption or electromagnetic emissions, to extract secret information. These attacks pose a significant threat to embedded devices where attackers may have physical access. Countermeasures like masking and bitslicing are employed to mitigate these risks.
+
+\section{Related Work}
+
+Several studies have focused on enhancing the side-channel resistance of PQC implementations:
+
+\begin{itemize}
+    \item \textbf{Masking Techniques for Dilithium:} Migliore et al.\ \cite{Migliore19} provided efficient implementations and side-channel evaluations using masking techniques.
+    \item \textbf{First-Order Masked Kyber:} Heinz et al.\ \cite{Heinz20} demonstrated practical side-channel resistance on embedded platforms with a first-order masked implementation.
+    \item \textbf{Higher-Order Masking:} Bos et al.\ \cite{Bos21} explored first- and higher-order masking schemes for Kyber.
+    \item \textbf{Improved Masking Gadgets:} Coron et al.\ \cite{Coron23} proposed improved gadgets for high-order masking of Dilithium.
+    \item \textbf{Bitslicing Techniques:} Bronchain and Cassiers \cite{Bronchain22} introduced bitslicing methods for efficient arithmetic/Boolean masking conversions.
+    \item \textbf{Enhanced Implementations:} Azouaoui et al.\ \cite{Azouaoui22} revisited sensitivity analysis and proposed improved implementations for Dilithium.
+\end{itemize}

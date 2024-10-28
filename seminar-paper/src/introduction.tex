@@ -1,6 +1,22 @@
-%
-% Sample introduction of your thesis
-%
-
 \chapter{Introduction}
-Describe the aim of your thesis and motivate this aim. Describe previous work and cite some stuff~\cite{Bay1, Ernst}, . Describe how your thesis is structured...
+
+\section{Motivation}
+
+The advent of quantum computing presents a critical challenge to existing cryptographic systems, especially for widely deployed public-key algorithms, which are vulnerable to quantum-based attacks. In response, the National Institute of Standards and Technology (NIST) initiated a standardization process to develop post-quantum cryptographic (PQC) algorithms resistant to quantum adversaries. However, these new algorithms must also be secure against classical attack vectors, including side-channel attacks (SCAs), such as power analysis and electromagnetic analysis, which can leak sensitive information during cryptographic operations.
+
+Side-channel resistance is particularly important for implementations on embedded devices, where resources are constrained, and physical access by attackers is more feasible. Lattice-based schemes like Kyber and Dilithium have emerged as leading candidates in the NIST PQC standardization process due to their favorable performance and security properties. However, their resistance to SCAs is an active area of research.
+
+Several studies have explored side-channel countermeasures for these schemes. Migliore et al.\ \cite{Migliore19} investigated masking techniques for Dilithium, providing efficient implementations and side-channel evaluations. Heinz et al.\ \cite{Heinz20} presented a first-order masked implementation of Kyber on ARM Cortex-M4, demonstrating practical side-channel resistance on embedded platforms. Further advancements include higher-order masking schemes \cite{Bos21}, improved masking gadgets \cite{Coron23}, and bitslicing techniques for efficient arithmetic/Boolean masking conversions \cite{Bronchain22}. Azouaoui et al.\ \cite{Azouaoui22} revisited the sensitivity analysis of Dilithium and proposed improved implementations to enhance its side-channel resistance.
+
+Understanding the feasibility and performance of these side-channel resistant implementations is crucial for real-world deployment. This seminar paper aims to systematically analyze and compare existing implementations, focusing on their practicality, security level, and performance overhead on embedded devices.
+
+\section{Goals}
+
+The primary goal of this seminar paper is to examine, compare, and evaluate existing side-channel resistant implementations of post-quantum cryptographic schemes on embedded systems. The key objectives are:
+
+\begin{itemize}
+    \item \textbf{Introduction of Key Concepts:} Provide a comprehensive overview of the most important aspects affecting the feasibility and performance of side-channel resistant implementations of post-quantum schemes, including masking techniques, bitslicing, and hardware considerations.
+    \item \textbf{Comparative Analysis:} Visualize, compare, and discuss existing implementations of PQC schemes like Kyber and Dilithium with respect to their side-channel resistance, performance metrics, and resource utilization on embedded devices.
+    \item \textbf{Evaluation of Countermeasures:} Assess the effectiveness of various side-channel countermeasures, such as first-order and higher-order masking, in protecting against different types of SCAs.
+    \item \textbf{Identification of Trade-offs:} Highlight the trade-offs between security and efficiency in side-channel resistant implementations, providing insights into optimal strategies for secure and performant PQC deployments.
+\end{itemize}
