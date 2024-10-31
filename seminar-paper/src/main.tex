@@ -1,7 +1,5 @@
-% EMSEC seminar template
-% Modified for your seminar paper
+% main.tex
 
-% Set author and title in settings.tex
 \documentclass[a4paper,12pt,twoside,openany,headsepline,bibliography=totocnumbered]{scrbook}
 
 % Import settings, packages, etc.
@@ -14,45 +12,48 @@
 
 % Abstract
 \section*{Abstract}
-The advent of quantum computing presents a critical challenge to existing cryptographic systems. Post-Quantum Cryptography (PQC) aims to develop cryptographic algorithms resistant to quantum-based attacks. However, these algorithms must also be secure against classical side-channel attacks (SCAs). This paper systematically analyzes and compares existing side-channel resistant implementations of PQC schemes, focusing on their practicality, security level, and performance overhead on embedded devices.
 
-\clearpage
+The advent of quantum computing presents a critical threat to current cryptographic systems, necessitating the development of post-quantum cryptographic (PQC) schemes that are resistant to both quantum and classical attacks. While lattice-based schemes like Kyber and Dilithium are prominent candidates for post-quantum security, their susceptibility to side-channel attacks (SCAs) on embedded devices poses additional security challenges. This paper systematically analyzes existing side-channel countermeasures, including masking and bitslicing techniques, which enhance the security of PQC schemes against power and electromagnetic SCAs. We compare implementations with first- and higher-order masking across performance metrics such as execution time and memory usage, revealing trade-offs between security and efficiency. Our findings highlight the importance of selecting appropriate countermeasures based on application requirements, emphasizing the potential of optimized high-order masking gadgets and hardware-assisted solutions. This work provides insights into balancing security and performance in resource-constrained environments, supporting the practical deployment of quantum-resistant cryptographic systems.
 
+% Table of contents
 \tableofcontents
-\mainmatter
 
-% List of acronyms
+% List of acronyms with corrected page handling
 \chapter*{Acronyms}
-\begin{acronym}
-    \setlength{\itemsep}{0.2em}
+\addcontentsline{toc}{chapter}{Acronyms}
+\begin{acronym}[PQC]
     \acro{PQC}{Post-Quantum Cryptography}
     \acro{SCA}{Side-Channel Attack}
     \acro{NIST}{National Institute of Standards and Technology}
     \acro{KEM}{Key Encapsulation Mechanism}
-    % Add more as needed
+    \acro{DPA}{Differential Power Analysis}
+    \acro{SPA}{Simple Power Analysis}
+    \acro{ARM}{Advanced RISC Machine}
+    \acro{TVLA}{Test Vector Leakage Assessment}
+    \acro{SNI}{Strong Non-Interference}
+    \acro{PINI}{Probe-Isolating Non-Interference}
+    \acro{PQ}{Post-Quantum}
+    \acro{ECC}{Elliptic Curve Cryptography}
+    \acro{AES}{Advanced Encryption Standard}
+    \acro{FO}{Fujisaki-Okamoto}
+    \acro{ILWE}{Integer Learning with Errors}
 \end{acronym}
 
-% Include all your chapters as .tex files
-\pagenumbering{arabic}
-
+% Include all chapters as .tex files
 \input{introduction}
 \input{background}
 \input{analysis}
 \input{conclusion}
 
-% Generate list of figures
+% List of figures and tables without extra pages
 \newpage
 \listoffigures
-
-% Generate list of tables
-\newpage
 \listoftables
-\clearpage
 
 % Start back matter
 \backmatter
 
-% Generate bibliography with BibTeX
+% Bibliography
 \bibliographystyle{plain}
 \bibliography{bibliography}
 

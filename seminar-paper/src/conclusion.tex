@@ -2,16 +2,35 @@
 
 \section{Summary of Findings}
 
-In this paper, we have analyzed various side-channel resistant implementations of PQC schemes. Our findings highlight the effectiveness of masking and bitslicing techniques in enhancing side-channel resistance while acknowledging the associated performance overheads.
+This paper has systematically analyzed and compared various side-channel resistant implementations of post-quantum cryptographic (\ac{PQC}) schemes, with a focus on lattice-based algorithms like Kyber and Dilithium. The findings demonstrate that while masking and bitslicing techniques provide substantial improvements in side-channel resistance, they come with performance trade-offs. First-order masking, as shown in the work of Heinz et al.\ \cite{Heinz20}, achieves practical side-channel resistance on embedded devices but is susceptible to higher-order attacks. Conversely, higher-order masking, explored by Bos et al.\ \cite{Bos21} and Coron et al.\ \cite{Coron23}, offers increased security but incurs significant computational overhead, which can limit feasibility for resource-constrained devices.
+
+Through comparative analysis, it became evident that the choice of side-channel countermeasure depends on the intended application and resource availability. Techniques like bitslicing, demonstrated by Bronchain and Cassiers \cite{Bronchain22}, effectively reduce masking conversion costs, highlighting their potential in performance-sensitive scenarios. Additionally, advanced masking gadgets, such as those introduced by Coron et al.\ \cite{Coron23}, play a critical role in enhancing the practicality of high-order masking by optimizing core operations.
 
 \section{Discussion of Trade-offs}
 
-We have identified trade-offs between security and efficiency. Higher-order masking provides increased security but at the cost of greater computational resources. Implementations must balance these aspects to meet the constraints of embedded devices.
+The analysis presented in this paper underscores several trade-offs between security and efficiency in side-channel resistant implementations of \ac{PQC} schemes:
+\begin{itemize}
+    \item \textbf{Security vs.\ Performance:} Higher-order masking enhances security but introduces substantial computational overhead, which may not be feasible on embedded platforms with limited processing power.
+    \item \textbf{First-Order vs.\ Higher-Order Masking:} While first-order masking offers a baseline defense against side-channel attacks, it is less secure against advanced, multi-variable probing attacks. Higher-order masking provides robust protection at the expense of increased complexity and resource requirements.
+    \item \textbf{Bitslicing and Masking Conversions:} Bitslicing improves the performance of arithmetic/Boolean masking conversions, making it particularly valuable in implementations that rely heavily on mixed masking types. However, the application of bitslicing is limited by the architecture and specific requirements of the target device.
+\end{itemize}
+
+These trade-offs illustrate that selecting the optimal countermeasure strategy requires a careful balance between security needs and device capabilities. The findings suggest that practical implementations may need to prioritize certain countermeasures based on application requirements, such as targeting first-order masking for less critical applications and deploying higher-order protections in high-security contexts.
 
 \section{Implications for Deployment}
 
-Our analysis underscores the importance of selecting appropriate countermeasures based on application requirements. Secure and efficient PQC implementations are crucial for the widespread adoption of quantum-resistant cryptography in resource-constrained environments.
+The insights with respect to the adoption of side-channel resistant \ac{PQC} schemes on embedded devices reveal critical considerations for real-world deployment. Given the rapid advancements in quantum computing, organizations will need to adopt \ac{PQC} algorithms to future-proof their security infrastructures. However, the side-channel vulnerabilities highlighted in this study underscore the importance of integrating appropriate countermeasures.
+
+For resource-constrained environments, the feasibility of implementing high-order masking or bitslicing remains challenging. In such cases, selecting more lightweight \ac{PQC} schemes or adopting hardware-assisted side-channel protections could offer practical solutions. As shown in works like those by Migliore et al.\ \cite{Migliore19} and Heinz et al.\ \cite{Heinz20}, embedding side-channel resistance into \ac{PQC} schemes requires significant attention to both security and performance constraints, making it a vital area for organizations deploying these algorithms on consumer devices.
 
 \section{Future Work}
 
-Future research could explore optimizing existing countermeasures and developing new techniques to reduce performance overheads. Investigating hardware-assisted solutions and exploring other PQC schemes may also yield valuable insights.
+Future research in side-channel resistant \ac{PQC} should aim to address the performance overheads associated with advanced masking techniques. Several promising directions include:
+\begin{itemize}
+    \item \textbf{Optimization of High-Order Masking:} Further research into high-order masking could help mitigate the resource costs associated with these techniques. Novel masking gadgets and techniques, such as those proposed by Coron et al.\ \cite{Coron23}, may improve efficiency, making them more viable for embedded platforms.
+    \item \textbf{Hardware-Assisted Countermeasures:} Incorporating hardware-assisted solutions, such as hardware-based randomness generation or dedicated cryptographic co-processors, could reduce the computational burden of masking and bitslicing, especially in devices where security is critical.
+    \item \textbf{New Masking Techniques for Mixed Operations:} Research into more efficient masking conversion methods, such as those employing bitslicing, could streamline the implementation of \ac{PQC} on devices that require both Boolean and arithmetic operations. Innovations in this area would be particularly beneficial for schemes like Kyber, which rely on mixed arithmetic structures.
+    \item \textbf{Evaluation of Alternative \ac{PQC} Schemes:} While lattice-based schemes like Kyber and Dilithium are prominent in the \ac{NIST} \ac{PQC} standardization process, exploring side-channel resistant implementations of alternative \ac{PQC} schemes, such as hash-based and code-based cryptosystems, may reveal additional viable candidates for quantum-resistant applications.
+\end{itemize}
+
+These future directions aim to bridge the gap between theoretical security and practical deployment, ultimately leading to side-channel resistant \ac{PQC} implementations that balance robustness and efficiency. Continued progress in this field will be essential for preparing cryptographic systems for the quantum era.

@@ -2,21 +2,43 @@
 
 \section{Post-Quantum Cryptography and Quantum Threats}
 
-Post-Quantum Cryptography (PQC) refers to cryptographic algorithms that are secure against attacks using quantum computers. With the advent of quantum computing, traditional public-key cryptosystems like RSA and ECC become vulnerable due to algorithms like Shor's algorithm. PQC aims to develop new cryptographic schemes that can withstand quantum attacks while maintaining efficiency on classical computers.
+Post-Quantum Cryptography (\ac{PQC}) refers to cryptographic algorithms designed to withstand attacks from quantum computers, which pose a threat to conventional cryptosystems such as RSA and elliptic curve cryptography due to Shor’s algorithm. In response, the \ac{NIST} initiated a standardization process to evaluate and select quantum-resistant algorithms. The primary goal is to develop algorithms that are secure against both classical and quantum adversaries, without compromising efficiency on classical computing architectures. Lattice-based schemes, particularly Key Encapsulation Mechanisms (\acp{KEM}) like Kyber and signature schemes like Dilithium, have emerged as leading candidates due to their strong security foundations and favorable performance metrics \cite{Azouaoui22}.
 
 \section{Side-Channel Attacks}
 
-Side-Channel Attacks (SCAs) exploit physical leakages from cryptographic devices, such as power consumption or electromagnetic emissions, to extract secret information. These attacks pose a significant threat to embedded devices where attackers may have physical access. Countermeasures like masking and bitslicing are employed to mitigate these risks.
+Side-channel attacks (\acp{SCA}) exploit physical leakages from cryptographic operations—such as timing, power consumption, and electromagnetic emissions—to extract sensitive information. These attacks are particularly effective on embedded devices, where physical access often allows attackers to measure leakage directly. \acp{SCA} are typically classified by the type of information they exploit:
+
+\begin{itemize}
+    \item \textbf{Timing Attacks:} Exploiting variations in the time taken by cryptographic operations.
+    \item \textbf{Power Analysis:} Utilizing power consumption patterns to infer cryptographic keys or other sensitive information.
+    \item \textbf{Electromagnetic Analysis:} Measuring electromagnetic radiation emitted during computation to uncover internal states.
+\end{itemize}
+
+In the context of \ac{PQC}, lattice-based cryptographic schemes present unique challenges for \ac{SCA} resistance. These schemes often involve complex arithmetic operations, such as polynomial multiplications and modular reductions, which are susceptible to \acp{SCA}. Research has shown that unmasked implementations of Kyber and Dilithium are vulnerable to Differential Power Analysis (\ac{DPA}) and Simple Power Analysis (\ac{SPA}), particularly during the generation and manipulation of secret-dependent values \cite{Bos21}.
+
+\section{Side-Channel Countermeasures}
+
+Several countermeasures have been developed to mitigate side-channel threats in \ac{PQC} implementations, particularly for lattice-based schemes:
+
+\begin{itemize}
+    \item \textbf{Masking:} Masking is a technique where sensitive variables are split into several shares to prevent leakage of secret information. In lattice-based schemes, masking can be Boolean, arithmetic, or a combination, depending on the nature of the operations. For instance, Migliore et al.\ (2019) \cite{Migliore19} demonstrated that Boolean masking is effective for Dilithium, reducing leakage during sensitive polynomial operations. However, this approach incurs computational overhead, especially at higher security orders.
+    \item \textbf{Bitslicing:} Bitslicing optimizes masking by arranging data in a format that allows parallel bitwise operations, reducing computational costs. Bronchain and Cassiers (2022) \cite{Bronchain22} applied bitslicing to efficiently manage Boolean and arithmetic masking conversions in lattice-based \acp{KEM}, achieving significant performance gains on the \ac{ARM} Cortex-M4 processor.
+    \item \textbf{Improved Masking Gadgets:} High-order masking gadgets, such as those proposed by Coron et al.\ (2023) \cite{Coron23}, introduce optimized components for arithmetic operations in Dilithium, addressing performance bottlenecks associated with high-order masking. Their approach includes specialized algorithms like the ShiftMod, which facilitate efficient conversions between Boolean and arithmetic masks.
+    \item \textbf{First-Order and Higher-Order Masking:} Heinz et al.\ (2020) \cite{Heinz20} and Bos et al.\ (2021) \cite{Bos21} have explored first- and higher-order masking for Kyber on embedded processors. First-order masking provides a basic level of side-channel resistance, while higher-order masking targets more sophisticated attackers capable of probing multiple variables.
+\end{itemize}
+
+These countermeasures illustrate the balance between security and computational efficiency in \ac{PQC} implementations. Masking and bitslicing approaches are particularly effective for lattice-based schemes, while optimized gadgets enhance the practicality of higher-order masking. However, these methods introduce trade-offs in terms of computational overhead and complexity, especially when implemented on resource-constrained devices.
 
 \section{Related Work}
 
-Several studies have focused on enhancing the side-channel resistance of PQC implementations:
+Several studies have focused on enhancing the side-channel resistance of \ac{PQC} implementations through masking, bitslicing, and hardware-specific optimizations:
 
 \begin{itemize}
-    \item \textbf{Masking Techniques for Dilithium:} Migliore et al.\ \cite{Migliore19} provided efficient implementations and side-channel evaluations using masking techniques.
-    \item \textbf{First-Order Masked Kyber:} Heinz et al.\ \cite{Heinz20} demonstrated practical side-channel resistance on embedded platforms with a first-order masked implementation.
-    \item \textbf{Higher-Order Masking:} Bos et al.\ \cite{Bos21} explored first- and higher-order masking schemes for Kyber.
-    \item \textbf{Improved Masking Gadgets:} Coron et al.\ \cite{Coron23} proposed improved gadgets for high-order masking of Dilithium.
-    \item \textbf{Bitslicing Techniques:} Bronchain and Cassiers \cite{Bronchain22} introduced bitslicing methods for efficient arithmetic/Boolean masking conversions.
-    \item \textbf{Enhanced Implementations:} Azouaoui et al.\ \cite{Azouaoui22} revisited sensitivity analysis and proposed improved implementations for Dilithium.
+    \item \textbf{Masking Techniques for Dilithium:} Migliore et al.\ (2019) \cite{Migliore19} introduced masking methods for Dilithium, offering one of the first comprehensive studies on side-channel evaluation for lattice-based signatures.
+    \item \textbf{First-Order Masked Kyber:} Heinz et al.\ (2020) \cite{Heinz20} presented a practical implementation of first-order masking for Kyber on an \ac{ARM} Cortex-M4 platform, validating its security through extensive side-channel analysis.
+    \item \textbf{Higher-Order Masking:} Bos et al.\ (2021) \cite{Bos21} explored advanced masking schemes for Kyber, achieving robust side-channel resistance by leveraging high-order masking and polynomial comparison techniques.
+    \item \textbf{Bitslicing Techniques:} Bronchain and Cassiers (2022) \cite{Bronchain22} applied bitslicing to \ac{PQC}, resulting in efficient masking conversions that improve the performance of Kyber and Saber on \ac{ARM} platforms.
+    \item \textbf{Improved Masking Gadgets for Dilithium:} Coron et al.\ (2023) \cite{Coron23} proposed new masking gadgets for high-order implementations, enhancing the efficiency and security of Dilithium signatures against \acp{SCA}.
 \end{itemize}
+
+This body of work underscores the evolving landscape of side-channel resistant \ac{PQC}, with ongoing research aimed at optimizing security and efficiency. As \ac{PQC} schemes advance towards standardization, these studies provide crucial insights into the design and implementation of quantum-resistant cryptographic solutions that are secure against both classical and side-channel attacks.

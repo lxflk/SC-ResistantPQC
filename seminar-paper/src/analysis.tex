@@ -2,26 +2,26 @@
 
 \section{Methodology}
 
-In this section, we define the criteria for comparing side-channel resistant implementations of PQC schemes. The criteria include:
+In this section, we define the evaluation criteria for side-channel resistant implementations of \ac{PQC} schemes, with particular emphasis on masking techniques, performance, and practicality on embedded devices. These criteria are based on the requirements for both security and efficiency in the face of quantum and side-channel threats:
 
 \begin{itemize}
-    \item \textbf{Security Level:} The order of masking used in the implementation, indicating its resistance to SCAs.
-    \item \textbf{Performance Metrics:} Execution time, memory usage, and computational overhead associated with the implementation.
-    \item \textbf{Practicality:} Ease of implementation, scalability, and resource utilization on embedded devices.
+    \item \textbf{Security Level:} The degree of masking, including first-order and higher-order masking, used in the implementation. This level indicates robustness against side-channel attacks (\acp{SCA}) like Differential Power Analysis (\ac{DPA}) and Simple Power Analysis (\ac{SPA}), as suggested in works such as Bos et al.\ (2021) \cite{Bos21} and Migliore et al.\ (2019) \cite{Migliore19}.
+    \item \textbf{Performance Metrics:} Execution time, memory usage, and computational overhead introduced by side-channel countermeasures. Metrics from Heinz et al.\ (2020) \cite{Heinz20} and Bronchain and Cassiers (2022) \cite{Bronchain22} are used as benchmarks for evaluating masked implementations on \ac{ARM} Cortex processors.
+    \item \textbf{Practicality and Scalability:} The ease of implementation and adaptability of masking techniques for embedded setting deployment. This includes the flexibility of approaches like bitslicing, which optimizes Boolean and arithmetic masking conversions and is addressed in recent literature by Bronchain and Cassiers (2022) \cite{Bronchain22}.
 \end{itemize}
 
-We will use these criteria to systematically compare existing implementations and assess their suitability for real-world applications.
+We will use these criteria to systematically compare implementations of \ac{PQC} schemes, assessing their applicability to real-world embedded systems under side-channel threats.
 
 \section{Comparative Analysis}
 
-Using the defined criteria, we compare the following implementations:
+Using the above criteria, we compare key implementations of lattice-based \ac{PQC} schemes focusing on their side-channel resistance:
 
 \begin{itemize}
-    \item \textbf{Migliore et al.\ \cite{Migliore19}:} Masking techniques for Dilithium.
-    \item \textbf{Heinz et al.\ \cite{Heinz20}:} First-order masked Kyber on ARM Cortex-M4.
-    \item \textbf{Bos et al.\ \cite{Bos21}:} Higher-order masking implementations of Kyber.
-    \item \textbf{Coron et al.\ \cite{Coron23}:} Improved gadgets for high-order masking.
-    \item \textbf{Bronchain and Cassiers \cite{Bronchain22}:} Bitslicing arithmetic/Boolean masking conversions.
+    \item \textbf{Migliore et al.\ (2019):} This study introduced a masking strategy for Dilithium, highlighting the importance of Boolean masking for side-channel protection in lattice-based signatures. Their approach demonstrated side-channel resistance, but at the cost of significant computational overhead \cite{Migliore19}.
+    \item \textbf{Heinz et al.\ (2020):} Heinz and colleagues presented a first-order masked Kyber implementation optimized for the \ac{ARM} Cortex-M4 processor, which achieved a practical balance between security and efficiency for embedded devices. Their use of the fixed-vs-random \ac{TVLA} method with 100,000 traces validated the security level \cite{Heinz20}.
+    \item \textbf{Bos et al.\ (2021):} Higher-order masking for Kyber, as explored in this paper, extends beyond first-order security to tackle potential vulnerabilities from advanced side-channel attacks. This study also demonstrated the use of masked polynomial comparison to reduce computational costs while maintaining higher security levels \cite{Bos21}.
+    \item \textbf{Coron et al.\ (2023):} This research introduced improved masking gadgets for high-order implementations, specifically designed for Dilithium. The innovations, including the ShiftMod algorithm and optimized Boolean-to-arithmetic masking, provided significant performance improvements, making higher-order masking more viable for embedded systems \cite{Coron23}.
+    \item \textbf{Bronchain and Cassiers (2022):} This paper innovated bitslicing techniques to improve masking conversion efficiency for lattice-based \acp{KEM}, such as Kyber. By leveraging Boolean and arithmetic masking conversions, their implementation achieved a speedup of up to 1.8x on \ac{ARM} Cortex-M4 compared to previous approaches, highlighting bitslicing's practicality for embedded applications \cite{Bronchain22}.
 \end{itemize}
 
-We will present visual comparisons, such as tables and graphs, to illustrate the performance and security trade-offs among these implementations.
+To provide an intuitive comparison, we will include visual representations such as tables and graphs illustrating the security, performance, and practicality trade-offs between these implementations. These will highlight the advancements and challenges faced in protecting \ac{PQC} schemes against side-channel vulnerabilities.
