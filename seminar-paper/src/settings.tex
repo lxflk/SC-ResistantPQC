@@ -1,4 +1,4 @@
-% List of packages and settings
+% settings.tex
 
 \newcommand{\thauthor}{Luis Falke}
 \newcommand{\thtitle}{Side-Channel Resistant Implementations of Post-Quantum Cryptography}
@@ -20,8 +20,64 @@
 \usepackage{multicol}
 \usepackage{hyphenat}
 \usepackage{cite}
+\usepackage{subcaption}
+\usepackage{etoolbox}
 
-% Set graphics path
+\makeatletter
+\patchcmd{\chapter}{plain}{fancyplain}{}{}
+\makeatother
+
+% Custom styles for different sections
+\fancypagestyle{chapterstart}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape \leftmark}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{abstract}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape Abstract}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{contents}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape Table of Contents}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{acronyms}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape Acronyms}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{listsoffigures}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape List of Figures}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{listoftables}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape List of Tables}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+\fancypagestyle{bibliography}{
+    \fancyhf{}
+    \fancyhead[L]{\slshape Bibliography}
+    \fancyhead[R]{\thepage}
+    \renewcommand{\headrulewidth}{0.4pt}
+}
+
+% Graphics path
 \graphicspath{{../figures/}}
 
 % URL style
@@ -33,8 +89,12 @@
 % Fancy headers
 \setlength{\headsep}{8mm}
 \pagestyle{fancyplain}
-\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
-\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
-\lhead[\fancyplain{}{\thepage}]{\fancyplain{}{\slshape \rightmark}}
+
+% Only chapter title in header
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{}
+
+% Left header shows chapter title, right header shows page number
+\lhead[\fancyplain{}{\thepage}]{\fancyplain{}{\slshape \leftmark}}
 \rhead[\fancyplain{}{\slshape \leftmark}]{\fancyplain{}{\thepage}}
 \cfoot{}

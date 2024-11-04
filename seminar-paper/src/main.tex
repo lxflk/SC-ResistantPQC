@@ -1,6 +1,6 @@
 % main.tex
 
-\documentclass[a4paper,12pt,twoside,openany,headsepline,bibliography=totocnumbered]{scrbook}
+\documentclass[a4paper,12pt,oneside,openany,headsepline,bibliography=totocnumbered]{scrbook}
 
 % Import settings, packages, etc.
 \input{settings}
@@ -12,14 +12,17 @@
 
 % Abstract
 \section*{Abstract}
+\thispagestyle{abstract}
 
 The advent of quantum computing presents a critical threat to current cryptographic systems, necessitating the development of post-quantum cryptographic (PQC) schemes that are resistant to both quantum and classical attacks. While lattice-based schemes like Kyber and Dilithium are prominent candidates for post-quantum security, their susceptibility to side-channel attacks (SCAs) on embedded devices poses additional security challenges. This paper systematically analyzes existing side-channel countermeasures, including masking and bitslicing techniques, which enhance the security of PQC schemes against power and electromagnetic SCAs. We compare implementations with first- and higher-order masking across performance metrics such as execution time and memory usage, revealing trade-offs between security and efficiency. Our findings highlight the importance of selecting appropriate countermeasures based on application requirements, emphasizing the potential of optimized high-order masking gadgets and hardware-assisted solutions. This work provides insights into balancing security and performance in resource-constrained environments, supporting the practical deployment of quantum-resistant cryptographic systems.
 
 % Table of contents
 \tableofcontents
+\thispagestyle{contents}
 
 % List of acronyms with corrected page handling
 \chapter*{Acronyms}
+\thispagestyle{acronyms}
 \addcontentsline{toc}{chapter}{Acronyms}
 \begin{acronym}[PQC]
     \acro{PQC}{Post-Quantum Cryptography}
@@ -48,13 +51,15 @@ The advent of quantum computing presents a critical threat to current cryptograp
 % List of figures and tables without extra pages
 \newpage
 \listoffigures
-\listoftables
+\thispagestyle{listsoffigures}
 
-% Start back matter
-\backmatter
+\listoftables
+\thispagestyle{listoftables}
 
 % Bibliography
+\newpage
 \bibliographystyle{plain}
 \bibliography{bibliography}
+\thispagestyle{bibliography}
 
 \end{document}

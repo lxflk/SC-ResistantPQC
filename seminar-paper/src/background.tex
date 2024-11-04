@@ -1,8 +1,9 @@
 \chapter{Background}
+\thispagestyle{chapterstart}
 
 \section{Post-Quantum Cryptography and Quantum Threats}
 
-Post-Quantum Cryptography (\ac{PQC}) refers to cryptographic algorithms designed to withstand attacks from quantum computers, which pose a threat to conventional cryptosystems such as RSA and elliptic curve cryptography due to Shor’s algorithm. In response, the \ac{NIST} initiated a standardization process to evaluate and select quantum-resistant algorithms. The primary goal is to develop algorithms that are secure against both classical and quantum adversaries, without compromising efficiency on classical computing architectures. Lattice-based schemes, particularly Key Encapsulation Mechanisms (\acp{KEM}) like Kyber and signature schemes like Dilithium, have emerged as leading candidates due to their strong security foundations and favorable performance metrics \cite{Azouaoui22}.
+Post-Quantum Cryptography (\ac{PQC}) refers to cryptographic algorithms designed to withstand attacks from quantum computers, which pose a threat to conventional cryptosystems such as RSA and elliptic curve cryptography due to Shor’s algorithm. In response, the \ac{NIST} initiated a standardization process to evaluate and select quantum-resistant algorithms. The primary goal is to develop algorithms that are secure against both classical and quantum adversaries, without compromising efficiency on classical computing architectures. Lattice-based schemes, particularly \acp{KEM} like Kyber and signature schemes like Dilithium, have emerged as leading candidates due to their strong security foundations and favorable performance metrics \cite{Azouaoui22}.
 
 \section{Side-Channel Attacks}
 
@@ -14,7 +15,7 @@ Side-channel attacks (\acp{SCA}) exploit physical leakages from cryptographic op
     \item \textbf{Electromagnetic Analysis:} Measuring electromagnetic radiation emitted during computation to uncover internal states.
 \end{itemize}
 
-In the context of \ac{PQC}, lattice-based cryptographic schemes present unique challenges for \ac{SCA} resistance. These schemes often involve complex arithmetic operations, such as polynomial multiplications and modular reductions, which are susceptible to \acp{SCA}. Research has shown that unmasked implementations of Kyber and Dilithium are vulnerable to Differential Power Analysis (\ac{DPA}) and Simple Power Analysis (\ac{SPA}), particularly during the generation and manipulation of secret-dependent values \cite{Bos21}.
+In the context of \ac{PQC}, lattice-based cryptographic schemes present unique challenges for \ac{SCA} resistance. These schemes often involve complex arithmetic operations, such as polynomial multiplications and modular reductions, which are susceptible to \acp{SCA}. Research has shown that unmasked implementations of Kyber and Dilithium are vulnerable to \ac{DPA} and \ac{SPA}, particularly during the generation and manipulation of secret-dependent values \cite{Bos21}.
 
 \section{Side-Channel Countermeasures}
 
