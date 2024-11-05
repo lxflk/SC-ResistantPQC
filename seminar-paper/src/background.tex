@@ -1,45 +1,141 @@
+% background.tex
+
 \chapter{Background}
 \thispagestyle{chapterstart}
 
 \section{Post-Quantum Cryptography and Quantum Threats}
 
-Post-Quantum Cryptography (\ac{PQC}) refers to cryptographic algorithms designed to withstand attacks from quantum computers, which pose a threat to conventional cryptosystems such as RSA and elliptic curve cryptography due to Shor’s algorithm. In response, the \ac{NIST} initiated a standardization process to evaluate and select quantum-resistant algorithms. The primary goal is to develop algorithms that are secure against both classical and quantum adversaries, without compromising efficiency on classical computing architectures. Lattice-based schemes, particularly \acp{KEM} like Kyber and signature schemes like Dilithium, have emerged as leading candidates due to their strong security foundations and favorable performance metrics \cite{Azouaoui22}.
+Post-Quantum Cryptography (\ac{PQC}) refers to cryptographic algorithms designed to be secure against attacks from both classical and quantum computers. The advent of practical quantum computers threatens traditional public-key cryptosystems like RSA and Elliptic Curve Cryptography (\ac{ECC}), as quantum algorithms such as Shor's algorithm can efficiently solve the underlying hard mathematical problems.
+
+In response to this threat, the National Institute of Standards and Technology (\ac{NIST}) initiated a standardization process to evaluate and select quantum-resistant cryptographic algorithms. Among the finalists, lattice-based schemes have emerged as strong candidates due to their security assumptions based on the hardness of lattice problems, which are believed to be resistant to quantum attacks.
+
+\subsection{CRYSTALS-Dilithium Digital Signature Scheme}
+
+CRYSTALS-Dilithium is a lattice-based digital signature scheme that has been selected by NIST for standardization. It is built upon the hardness of the Module Learning With Errors (MLWE) problem, which involves solving systems of noisy linear equations over polynomial rings.
+
+Dilithium operates over a polynomial ring $\mathbb{Z}_q[X]/(X^n + 1)$, where $q$ is a prime modulus and $n$ is a power of two. The scheme uses structured lattices to achieve efficient key generation, signing, and verification processes.
+
+Key operations in Dilithium include:
+
+\begin{itemize}
+    \item \textbf{Polynomial Arithmetic}: Operations such as polynomial multiplication and addition are fundamental. These are often implemented using Number Theoretic Transforms (NTTs) for efficiency.
+    \item \textbf{Sampling}: Generating random polynomials with coefficients from specific distributions, such as the centered binomial distribution.
+    \item \textbf{Decomposition Functions}: Functions like \texttt{Decompose} split a polynomial's coefficients into high and low parts, which are critical for the rejection sampling and ensuring the correctness of the signature.
+\end{itemize}
+
+While Dilithium is designed to be secure against quantum adversaries, its implementations can be vulnerable to side-channel attacks if not properly protected, especially during operations involving secret keys and sensitive intermediate values.
 
 \section{Side-Channel Attacks}
 
-Side-channel attacks (\acp{SCA}) exploit physical leakages from cryptographic operations—such as timing, power consumption, and electromagnetic emissions—to extract sensitive information. These attacks are particularly effective on embedded devices, where physical access often allows attackers to measure leakage directly. \acp{SCA} are typically classified by the type of information they exploit:
+Side-channel attacks (\acp{SCA}) exploit physical leakages from cryptographic implementations to extract sensitive information. Unlike traditional cryptanalysis, which targets the mathematical structure of cryptographic algorithms, side-channel analysis leverages information such as timing, power consumption, electromagnetic emissions, or even acoustic signals produced during the execution of cryptographic operations.
+
+\subsection{Types of Side-Channel Attacks}
 
 \begin{itemize}
-    \item \textbf{Timing Attacks:} Exploiting variations in the time taken by cryptographic operations.
-    \item \textbf{Power Analysis:} Utilizing power consumption patterns to infer cryptographic keys or other sensitive information.
-    \item \textbf{Electromagnetic Analysis:} Measuring electromagnetic radiation emitted during computation to uncover internal states.
+    \item \textbf{Timing Attacks}: Analyze variations in the time taken to perform cryptographic operations.
+    \item \textbf{Power Analysis Attacks}: Measure the power consumption during computation to infer secret data. Includes Simple Power Analysis (SPA) and Differential Power Analysis (DPA).
+    \item \textbf{Electromagnetic Attacks}: Capture electromagnetic emissions to recover secret information.
 \end{itemize}
 
-In the context of \ac{PQC}, lattice-based cryptographic schemes present unique challenges for \ac{SCA} resistance. These schemes often involve complex arithmetic operations, such as polynomial multiplications and modular reductions, which are susceptible to \acp{SCA}. Research has shown that unmasked implementations of Kyber and Dilithium are vulnerable to \ac{DPA} and \ac{SPA}, particularly during the generation and manipulation of secret-dependent values \cite{Bos21}.
+\subsection{Side-Channel Vulnerabilities in Dilithium}
 
-\section{Side-Channel Countermeasures}
-
-Several countermeasures have been developed to mitigate side-channel threats in \ac{PQC} implementations, particularly for lattice-based schemes:
+In Dilithium, side-channel vulnerabilities may arise during:
 
 \begin{itemize}
-    \item \textbf{Masking:} Masking is a technique where sensitive variables are split into several shares to prevent leakage of secret information. In lattice-based schemes, masking can be Boolean, arithmetic, or a combination, depending on the nature of the operations. For instance, Migliore et al.\ (2019) \cite{Migliore19} demonstrated that Boolean masking is effective for Dilithium, reducing leakage during sensitive polynomial operations. However, this approach incurs computational overhead, especially at higher security orders.
-    \item \textbf{Bitslicing:} Bitslicing optimizes masking by arranging data in a format that allows parallel bitwise operations, reducing computational costs. Bronchain and Cassiers (2022) \cite{Bronchain22} applied bitslicing to efficiently manage Boolean and arithmetic masking conversions in lattice-based \acp{KEM}, achieving significant performance gains on the \ac{ARM} Cortex-M4 processor.
-    \item \textbf{Improved Masking Gadgets:} High-order masking gadgets, such as those proposed by Coron et al.\ (2023) \cite{Coron23}, introduce optimized components for arithmetic operations in Dilithium, addressing performance bottlenecks associated with high-order masking. Their approach includes specialized algorithms like the ShiftMod, which facilitate efficient conversions between Boolean and arithmetic masks.
-    \item \textbf{First-Order and Higher-Order Masking:} Heinz et al.\ (2020) \cite{Heinz20} and Bos et al.\ (2021) \cite{Bos21} have explored first- and higher-order masking for Kyber on embedded processors. First-order masking provides a basic level of side-channel resistance, while higher-order masking targets more sophisticated attackers capable of probing multiple variables.
+    \item \textbf{Key Generation}: Operations involving secret keys can leak information if not properly masked.
+    \item \textbf{Signing Process}: Computations involving secret polynomials and nonce generation are potential points of leakage.
+    \item \textbf{Decomposition and Rejection Sampling}: Functions like \texttt{Decompose} and conditional branches based on secret data can introduce side-channel leaks.
 \end{itemize}
 
-These countermeasures illustrate the balance between security and computational efficiency in \ac{PQC} implementations. Masking and bitslicing approaches are particularly effective for lattice-based schemes, while optimized gadgets enhance the practicality of higher-order masking. However, these methods introduce trade-offs in terms of computational overhead and complexity, especially when implemented on resource-constrained devices.
+Embedded devices are particularly susceptible to \acp{SCA} due to their physical accessibility and limited resources, making it challenging to implement complex countermeasures.
 
-\section{Related Work}
+\section{Masking as a Side-Channel Countermeasure}
 
-Several studies have focused on enhancing the side-channel resistance of \ac{PQC} implementations through masking, bitslicing, and hardware-specific optimizations:
+Masking is a widely used countermeasure against \acp{SCA}, which involves splitting sensitive variables into multiple shares such that no single share reveals any information about the secret. By ensuring that computations operate on these shares independently, masking reduces the correlation between physical leakages and the sensitive data.
+
+\subsection{Types of Masking}
 
 \begin{itemize}
-    \item \textbf{Masking Techniques for Dilithium:} Migliore et al.\ (2019) \cite{Migliore19} introduced masking methods for Dilithium, offering one of the first comprehensive studies on side-channel evaluation for lattice-based signatures.
-    \item \textbf{First-Order Masked Kyber:} Heinz et al.\ (2020) \cite{Heinz20} presented a practical implementation of first-order masking for Kyber on an \ac{ARM} Cortex-M4 platform, validating its security through extensive side-channel analysis.
-    \item \textbf{Higher-Order Masking:} Bos et al.\ (2021) \cite{Bos21} explored advanced masking schemes for Kyber, achieving robust side-channel resistance by leveraging high-order masking and polynomial comparison techniques.
-    \item \textbf{Bitslicing Techniques:} Bronchain and Cassiers (2022) \cite{Bronchain22} applied bitslicing to \ac{PQC}, resulting in efficient masking conversions that improve the performance of Kyber and Saber on \ac{ARM} platforms.
-    \item \textbf{Improved Masking Gadgets for Dilithium:} Coron et al.\ (2023) \cite{Coron23} proposed new masking gadgets for high-order implementations, enhancing the efficiency and security of Dilithium signatures against \acp{SCA}.
+    \item \textbf{Boolean Masking}: Sensitive values are masked using bitwise XOR operations. Suitable for algorithms involving logical operations.
+    \item \textbf{Arithmetic Masking}: Sensitive values are masked using modular addition. Suitable for algorithms involving arithmetic operations in rings or fields.
 \end{itemize}
 
-This body of work underscores the evolving landscape of side-channel resistant \ac{PQC}, with ongoing research aimed at optimizing security and efficiency. As \ac{PQC} schemes advance towards standardization, these studies provide crucial insights into the design and implementation of quantum-resistant cryptographic solutions that are secure against both classical and side-channel attacks.
+\subsection{Higher-Order Masking}
+
+Higher-order masking extends the concept by splitting sensitive variables into $d$ shares, providing protection against adversaries capable of observing up to $d - 1$ leakages simultaneously. This increases the security level but introduces significant computational overhead and complexity, especially for non-linear operations where secure recombination of shares is required.
+
+\subsection{Security Models for Masking}
+
+\begin{itemize}
+    \item \textbf{$t$-Probing Model}: Assumes an adversary can probe up to $t$ internal variables during execution. A masking scheme is secure in this model if any set of $t$ or fewer probes yields no information about the secret.
+    \item \textbf{Strong Non-Interference (SNI)}: A property of masked gadgets ensuring that they can be securely composed in parallel without introducing vulnerabilities.
+    \item \textbf{Probe-Isolating Non-Interference (PINI)}: A relaxation of SNI that allows for more efficient implementations while still ensuring composability under certain conditions.
+\end{itemize}
+
+\subsection{Masking in Polynomial Arithmetic}
+
+Masking polynomial operations in schemes like Dilithium involves:
+
+\begin{itemize}
+    \item \textbf{Linear Operations}: Addition and subtraction can be performed share-wise, preserving the masking without additional complexity.
+    \item \textbf{Non-Linear Operations}: Multiplication and modular reductions require specialized masked algorithms to securely handle the interaction between shares.
+\end{itemize}
+
+\section{Masking Gadgets and Techniques}
+
+Implementing masking requires the use of specific algorithms, often referred to as \emph{gadgets}, that securely perform operations on masked data.
+
+\subsection{Common Masking Gadgets}
+
+\begin{itemize}
+    \item \textbf{Masked Multiplication}: Securely computes the product of masked values without leaking information.
+    \item \textbf{Refresh Gadgets}: Randomize shares to prevent leakage accumulation over time.
+    \item \textbf{Conversion Gadgets}: Convert between different types of masking (e.g., Boolean to Arithmetic) while maintaining security.
+\end{itemize}
+
+\subsection{Specific Gadgets in Dilithium}
+
+In the context of Dilithium, certain gadgets are critical:
+
+\begin{itemize}
+    \item \textbf{ShiftMod Gadget}: Enables efficient arithmetic shifts modulo $2q$ for any integer $q$. Essential for operations like dividing polynomials by powers of two.
+    \item \textbf{Boolean-to-Arithmetic Conversion}: Converts masked values from Boolean shares to Arithmetic shares modulo $q$. Necessary for operations involving both types of masking.
+    \item \textbf{Masked Decompose Function}: Securely implements the \texttt{Decompose} function on masked polynomials, splitting coefficients into high and low parts without leaking information.
+\end{itemize}
+
+\section{Security Proofs and Composability}
+
+Ensuring that masking schemes are secure requires formal proofs in appropriate security models. Composability is crucial, as complex cryptographic algorithms are built from multiple components.
+
+\subsection{Security Proofs in the $t$-Probing Model}
+
+A masking scheme is proven secure if it can be shown that any adversary probing up to $t$ variables gains no information about the secret. This involves demonstrating that the joint distribution of the probed variables is independent of the sensitive data.
+
+\subsection{Strong Non-Interference (SNI) and PINI}
+
+\begin{itemize}
+    \item \textbf{SNI}: Guarantees that masked operations can be composed securely, even in parallel. SNI gadgets are designed to prevent the combination of leakages from different operations.
+    \item \textbf{PINI}: A relaxed version of SNI that allows for more efficient implementations. PINI gadgets isolate probes within individual operations but may require additional precautions when composed.
+\end{itemize}
+
+\section{Randomized vs.\ Deterministic Signing in Dilithium}
+
+Dilithium can operate in two modes:
+
+\begin{itemize}
+    \item \textbf{Deterministic Signing}: The secret nonce used in the signing process is derived deterministically from the message and secret key. This approach simplifies verification but may be more susceptible to side-channel attacks if not properly masked.
+    \item \textbf{Randomized Signing}: The nonce is generated randomly for each signature. This can improve side-channel resistance by adding unpredictability but requires secure random number generation.
+\end{itemize}
+
+Randomized signing can reduce the need for masking complex deterministic computations, leading to performance benefits in masked implementations.
+
+\section{Challenges in Masking Dilithium}
+
+Masking Dilithium involves addressing several challenges:
+
+\begin{itemize}
+    \item \textbf{Efficiency}: High-order masking introduces significant overhead. Optimizing gadgets and focusing on critical components are essential to maintain acceptable performance.
+    \item \textbf{Complex Operations}: Functions like \texttt{Decompose} and conditional branching based on secret data require careful masking to prevent leakages.
+    \item \textbf{Resource Constraints}: Embedded devices have limited computational resources and memory, making efficient implementations necessary.
+    \item \textbf{Security Proofs}: Providing formal security guarantees requires rigorous proofs in appropriate models, which can be complex for high-order masking schemes.
+\end{itemize}

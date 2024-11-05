@@ -5,41 +5,46 @@
 
 \section{Summary of Findings}
 
-This paper has systematically analyzed and compared various side-channel resistant implementations of post-quantum cryptographic (\ac{PQC}) schemes, with a focus on lattice-based algorithms like Kyber and Dilithium. The findings demonstrate that while masking and bitslicing techniques provide substantial improvements in side-channel resistance, they come with performance trade-offs.
+This paper has analyzed and compared three significant implementations of side-channel resistant Dilithium:
 
-Migliore et al.\ (2019) \cite{Migliore19} showed that an unmasked implementation of Dilithium is vulnerable to side-channel attacks, with detectable leakage occurring after only 500 traces. By applying a combination of arithmetic and Boolean masking techniques and introducing a power-of-two modulus, they significantly improved the side-channel resistance, with no detectable leakage after 10,000 traces. Their approach, however, introduces a performance overhead of approximately $5.6\times$ for first-order masking.
+\begin{enumerate}
+    \item \textbf{Prest et al.\ (2021)}: Focused on efficient first-order masking techniques for Dilithium, demonstrating acceptable performance on embedded devices.
+    \item \textbf{Azouaoui et al.\ (2022)}: Extended masking to higher orders, up to \( d = 8 \), and introduced optimized gadgets. They highlighted the benefits of randomized signing over deterministic signing in terms of both security and performance.
+    \item \textbf{Coron et al.\ (2023)}: Introduced novel gadgets like ShiftMod for efficient high-order masking, providing strong security proofs and practical performance improvements for small masking orders.
+\end{enumerate}
 
-First-order masking, as shown in the work of Heinz et al.\ \cite{Heinz20}, achieves practical side-channel resistance on embedded devices but is susceptible to higher-order attacks. Conversely, higher-order masking, explored by Bos et al.\ \cite{Bos21} and Coron et al.\ \cite{Coron23}, offers increased security but incurs significant computational overhead, which can limit feasibility for resource-constrained devices.
-
-Through comparative analysis, it became evident that the choice of side-channel countermeasure depends on the intended application and resource availability. Techniques like bitslicing, demonstrated by Bronchain and Cassiers \cite{Bronchain22}, effectively reduce masking conversion costs, highlighting their potential in performance-sensitive scenarios.
+Our analysis revealed that while all three implementations aim to enhance side-channel resistance, they differ in their approaches, targeted security levels, and performance trade-offs. Prest et al.\ prioritize performance for first-order masking, making it suitable for applications where minimal overhead is acceptable. Azouaoui et al.\ provide scalable higher-order masking, emphasizing the importance of refined sensitivity analysis and the advantages of randomized signing. Coron et al.\ offer innovative solutions for high-order masking with strong security guarantees but acknowledge limitations in practicality for large masking orders due to exponential complexity.
 
 \section{Discussion of Trade-offs}
 
-The analysis presented in this paper underscores several trade-offs between security and efficiency in side-channel resistant implementations of \ac{PQC} schemes:
+The primary trade-offs identified between security and performance include:
 
 \begin{itemize}
-    \item \textbf{Security vs.\ Performance:} Higher-order masking enhances security but introduces substantial computational overhead, which may not be feasible on embedded platforms with limited processing power. Migliore et al.\ (2019) showed that even first-order masking incurs significant overhead.
-    \item \textbf{Algorithmic Modifications:} Modifying algorithm parameters, such as using a power-of-two modulus as in Migliore et al.\ (2019), can improve masking efficiency but may affect standardization and compatibility with existing specifications.
-    \item \textbf{First-Order vs.\ Higher-Order Masking:} While first-order masking offers a baseline defense against side-channel attacks, it is less secure against advanced, multi-variable probing attacks. Higher-order masking provides robust protection at the expense of increased complexity and resource requirements.
+    \item \textbf{Masking Order vs. Performance}: Higher-order masking provides stronger security against sophisticated side-channel attacks but incurs significant computational overhead, making it less practical for resource-constrained devices.
+    \item \textbf{Randomized vs. Deterministic Signing}: Randomized signing reduces the need for masking complex functions like hash operations, leading to better performance and security. However, deterministic signing may be preferred in applications requiring reproducibility.
+    \item \textbf{Algorithm Complexity}: Innovative gadgets like those introduced by Coron et al.\ improve efficiency for small masking orders but may not scale well for higher orders due to increased complexity.
 \end{itemize}
 
-These trade-offs illustrate that selecting the optimal countermeasure strategy requires a careful balance between security needs and device capabilities. The findings suggest that practical implementations may need to prioritize certain countermeasures based on application requirements, such as targeting first-order masking for less critical applications and deploying higher-order protections in high-security contexts.
+These trade-offs highlight the need to balance security requirements with practical constraints, choosing appropriate masking techniques based on the specific application and acceptable performance overhead.
 
 \section{Implications for Deployment}
 
-The insights with respect to the adoption of side-channel resistant \ac{PQC} schemes on embedded devices reveal critical considerations for real-world deployment. Given the rapid advancements in quantum computing, organizations will need to adopt \ac{PQC} algorithms to future-proof their security infrastructures. However, the side-channel vulnerabilities highlighted in this study underscore the importance of integrating appropriate countermeasures.
+For practitioners and developers aiming to implement side-channel resistant Dilithium in real-world applications, the following considerations are important:
 
-For resource-constrained environments, the feasibility of implementing high-order masking or bitslicing remains challenging. In such cases, selecting more lightweight \ac{PQC} schemes or adopting hardware-assisted side-channel protections could offer practical solutions. As shown in works like those by Migliore et al.\ \cite{Migliore19} and Heinz et al.\ \cite{Heinz20}, embedding side-channel resistance into \ac{PQC} schemes requires significant attention to both security and performance constraints, making it a vital area for organizations deploying these algorithms on consumer devices.
+\begin{itemize}
+    \item \textbf{Application Requirements}: Assess the required security level and acceptable performance overhead. For applications where first-order side-channel resistance suffices, methods like those of Prest et al.\ may be adequate.
+    \item \textbf{Resource Constraints}: Evaluate the computational and memory resources of the target platform. High-order masking may not be feasible on devices with limited capabilities.
+    \item \textbf{Security Proofs}: Consider implementations with strong security proofs, especially for applications requiring high assurance, even if it comes at the cost of increased complexity.
+    \item \textbf{Randomized Signing}: Where acceptable, prefer randomized signing to leverage performance and security benefits, as demonstrated by Azouaoui et al.
+\end{itemize}
 
 \section{Future Work}
 
-Future research in side-channel resistant \ac{PQC} should aim to address the performance overheads associated with advanced masking techniques. Several promising directions include:
+Future research can explore:
 
 \begin{itemize}
-    \item \textbf{Optimization of High-Order Masking:} Further research into high-order masking could help mitigate the resource costs associated with these techniques. Novel masking gadgets and techniques, such as modifying algorithm parameters (e.g., modulus selection), may improve efficiency, making them more viable for embedded platforms.
-    \item \textbf{Standardization Considerations:} Investigating ways to incorporate efficient masking techniques into standardized versions of \ac{PQC} schemes, ensuring that security enhancements do not conflict with compatibility and adoption.
-    \item \textbf{Hardware-Assisted Countermeasures:} Incorporating hardware-assisted solutions, such as hardware-based randomness generation or dedicated cryptographic co-processors, could reduce the computational burden of masking and bitslicing, especially in devices where security is critical.
+    \item \textbf{Scalable High-Order Masking}: Develop methods to reduce the complexity of high-order masking gadgets, making them practical for higher masking orders.
+    \item \textbf{Hardware Support}: Investigate hardware acceleration and support for masking operations to improve performance on embedded devices.
+    \item \textbf{Unified Frameworks}: Create unified frameworks that combine the strengths of various approaches, offering configurable security levels and optimized performance.
+    \item \textbf{Side-Channel Analysis Tools}: Enhance tools for side-channel analysis and verification to aid in the development of secure implementations.
 \end{itemize}
-
-These future directions aim to bridge the gap between theoretical security and practical deployment, ultimately leading to side-channel resistant \ac{PQC} implementations that balance robustness and efficiency. Continued progress in this field will be essential for preparing cryptographic systems for the quantum era.
-

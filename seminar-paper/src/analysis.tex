@@ -5,183 +5,295 @@
 
 \section{Methodology}
 
-In this section, we refine our evaluation criteria for side-channel resistant implementations of \ac{PQC} schemes by incorporating detailed analyses from recent literature. We focus on masking techniques, performance metrics, and practicality on embedded devices, drawing from specific methodologies used in studies such as Migliore et al.\ (2019) \cite{Migliore19}.
+In this analysis, we evaluate the side-channel resistance and performance of various masked implementations of the CRYSTALS-Dilithium digital signature scheme. Our methodology focuses on comparing key metrics across selected implementations to understand the trade-offs between security and efficiency, particularly in the context of embedded devices.
 
-Our evaluation criteria are:
+The main aspects considered are:
 
 \begin{itemize}
-    \item \textbf{Side-Channel Resistance Evaluation:} The methodologies employed to assess side-channel vulnerabilities, including the use of Welch's t-test, single-bit Differential Power Analysis (DPA), and Test Vector Leakage Assessment (TVLA), as demonstrated in Migliore et al.\ (2019) \cite{Migliore19} and Heinz et al.\ (2020) \cite{Heinz20}.
-    \item \textbf{Masking Techniques:} The specific masking strategies applied, such as Boolean masking, arithmetic masking, or hybrid approaches, and their effectiveness in preventing side-channel leakage. We consider the order of masking and the associated security proofs in the probing model \cite{Migliore19}.
-    \item \textbf{Implementation Efficiency:} The computational overhead introduced by masking, including execution time, memory usage, and the impact on performance-critical operations like polynomial multiplication and decomposition. Metrics are drawn from implementation results reported in studies like Migliore et al.\ (2019) \cite{Migliore19} and Bronchain and Cassiers (2022) \cite{Bronchain22}.
-    \item \textbf{Algorithmic Modifications for Efficiency:} Any algorithmic changes proposed to enhance masking efficiency, such as modifying the modulus to a power of two \cite{Migliore19}, and their implications for security and performance.
-    \item \textbf{Practicality and Scalability:} The feasibility of implementing the proposed countermeasures on resource-constrained embedded devices, including considerations for assembly-level optimizations and hardware-specific challenges.
+    \item \textbf{Security Level}: The order of masking applied and the robustness against side-channel attacks.
+    \item \textbf{Performance Metrics}: Execution time, cycle counts, and computational overhead introduced by the masking techniques.
+    \item \textbf{Feasibility on Embedded Devices}: Practicality of implementations on resource-constrained platforms.
+    \item \textbf{Implementation Techniques}: Specific masking schemes and optimizations employed to enhance security and performance.
+    \item \textbf{Trade-offs}: Balancing security requirements with performance constraints.
 \end{itemize}
 
-Using these refined criteria, we will perform an in-depth analysis of the selected implementations, emphasizing how each addresses the challenges of side-channel resistance in \ac{PQC} schemes.
+We base our analysis on a selection of key papers that have contributed significantly to the field of side-channel resistant implementations of Dilithium.
 
-\section{In-Depth Analysis of Selected Implementations}
+\section{Selected Implementations}
 
-\subsection{Migliore et al.\ (2019): Masking Dilithium for Side-Channel Resistance}
+\subsection{Efficient and Secure Masking of Dilithium}
 
-Migliore et al.\ \cite{Migliore19} present one of the first comprehensive studies on masking the Dilithium signature scheme to protect against side-channel attacks. Their work focuses on evaluating the side-channel leakage of an unprotected implementation of Dilithium and proposing efficient masking techniques to mitigate these vulnerabilities.
+Prest et al.\ introduce a first-order masked implementation of Dilithium, focusing on efficient techniques suitable for embedded devices. They address the challenges of masking lattice-based operations and aim to minimize the performance overhead associated with side-channel countermeasures.
 
-\subsubsection{Side-Channel Evaluation of Unmasked Dilithium}
+\subsubsection{Security Level}
 
-The authors first perform a side-channel analysis of an unmasked implementation of Dilithium on an ARM Cortex-M3 microcontroller (STM32F1). They target critical functions such as \texttt{LowBits\_q}, \texttt{HighBits\_q}, and rejection sampling operations, which are susceptible to side-channel leakage due to their manipulation of secret-dependent data.
+The implementation targets first-order side-channel resistance by applying masking to sensitive variables. The authors carefully identify the parts of the algorithm that require protection, such as the secret keys and intermediate computations involving these keys.
 
-Using Welch's t-test and single-bit DPA on the electromagnetic (EM) emissions, they demonstrate that significant leakage occurs in these functions with as few as 500 traces. As illustrated in Figure~\ref{fig:dpa_curves}, the single-bit DPA curves for the \texttt{Rejection}, \texttt{LowBits\_q}, and \texttt{HighBits\_q} functions reveal clear peaks, indicating exploitable leakage.
+\subsubsection{Performance Metrics}
 
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{../figures/Rejection.png}
-        \caption{\texttt{Rejection}}
-        \label{fig:rejection}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{../figures/LowBits.png}
-        \caption{\texttt{LowBits\_q}}
-        \label{fig:lowbits}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{../figures/HighBits.png}
-        \caption{\texttt{HighBits\_q}}
-        \label{fig:highbits}
-    \end{subfigure}
-    \caption{Single-bit DPA curves on bit 0 of sensitive data (using 500 traces). Significant peaks indicate leakage in unmasked implementations.}
-    \label{fig:dpa_curves}
-\end{figure}
+Key performance metrics reported include:
 
-This evaluation underscores the necessity of implementing countermeasures to protect Dilithium against side-channel attacks on embedded devices.
+\begin{itemize}
+    \item \textbf{Execution Time}: The masked implementation introduces an overhead of approximately $2\times$ compared to the unmasked version.
+    \item \textbf{Cycle Counts}: Specific optimizations reduce the cycle counts for critical operations.
+\end{itemize}
 
-\subsubsection{Algorithmic Modification: Power-of-Two Modulus}
+\subsubsection{Feasibility on Embedded Devices}
 
-A significant innovation in their work is the proposal to modify the modulus $q$ from a prime number to a power of two. This change simplifies the masking of certain operations, particularly the decomposition functions like \texttt{HighBits\_q} and \texttt{LowBits\_q}, which become straightforward bit-shifting operations when $q$ is a power of two.
+The authors demonstrate that their first-order masked implementation is practical on embedded platforms, achieving acceptable performance with minimal resource consumption.
 
-This modification results in considerable performance improvements, achieving speedups of up to $8\times$ for the most time-consuming masking operations, as shown in Table~\ref{tab:performance-masking}.
+\subsubsection{Implementation Techniques}
 
-\begin{table}[h]
-    \centering
-    \caption{Execution times of main gadgets for both prime and power-of-two modulus $q$ on STM32F1 (order-1 masking, computation on 1 coefficient).}
-    \label{tab:performance-masking}
-    \begin{tabular}{|l|c|c|c|}
-        \hline
-                                           & $q = 8380417$              & $q = 2^b$                & Speedup   \\
-        \hline
-        \texttt{arith::to::bool::lowbits}  & 331 $\mu$s / 7,944 cycles  & 38 $\mu$s / 912 cycles   & $8\times$ \\
-        \texttt{arith::to::bool::highbits} & 275 $\mu$s / 6,600 cycles  & 37 $\mu$s / 888 cycles   & $7\times$ \\
-        \texttt{arith::makehint}           & 560 $\mu$s / 13,440 cycles & 79 $\mu$s / 1,896 cycles & $7\times$ \\
-        \texttt{bool::rejection}           & 66 $\mu$s / 1,584 cycles   & 66 $\mu$s / 1,584 cycles & $1\times$ \\
-        \hline
-    \end{tabular}
-\end{table}
+They employ specialized algorithms for masking polynomial arithmetic and optimize the implementation by minimizing the number of non-linear operations that require costly masking.
 
-They argue that this alteration does not affect the security of the scheme, relying on a modulus-switching argument to maintain the hardness of the underlying lattice problems.
+\subsection{Protecting Dilithium Against Leakage Revisited}
 
-\subsubsection{Performance Overhead of Masking}
+Azouaoui et al.\ revisit the masking of Dilithium by refining the sensitivity analysis and introducing efficient higher-order masking techniques. They provide implementations supporting masking orders up to $d = 8$.
 
-To quantify the performance impact of the proposed masking techniques, Migliore et al.\ measured the execution times for \texttt{DILITHIUM.KeyGen} and \texttt{DILITHIUM.Sign} operations with different masking orders. As presented in Table~\ref{tab:overall-performance}, the first-order masked implementation incurs a performance overhead of approximately $5.6\times$ compared to the unmasked version for both key generation and signature operations.
+\subsubsection{Security Level}
 
-\begin{table}[h]
-    \centering
-    \caption{Execution times of \texttt{DILITHIUM.KeyGen} and \texttt{DILITHIUM.Sign} on an Intel Core i7-7600U CPU running at 2.80 GHz (10,000 runs).}
-    \label{tab:overall-performance}
-    \begin{tabular}{|l|c|c|c|c|}
-        \hline
-                        & No Masking           & Order-1 Masking & Order-2 Masking & Order-3 Masking \\
-        \hline
-        \texttt{KeyGen} & 323 $\mu$s           & 1.83 ms         & 2.52 ms         & 4.32 ms         \\
-                        & (\textit{reference}) & ($5.66\times$)  & ($7.8\times$)   & ($13.4\times$)  \\
-        \hline
-        \texttt{Sign}   & 992 $\mu$s           & 5.64 ms         & 11.68 ms        & 28.08 ms        \\
-                        & (\textit{reference}) & ($5.68\times$)  & ($11.77\times$) & ($28.3\times$)  \\
-        \hline
-    \end{tabular}
-\end{table}
+The implementations offer up to ninth-order side-channel resistance. The authors emphasize the importance of accurately identifying sensitive components to avoid unnecessary masking.
 
-\subsubsection{Side-Channel Resistance Evaluation of Masked Dilithium}
+\subsubsection{Performance Metrics}
 
-To demonstrate the effectiveness of their masking techniques, the authors performed a t-test analysis using 10,000 traces. Figure~\ref{fig:t-test-masked} illustrates the evaluation results, showing no detectable first-order leakage in the masked implementation, as all t-values remain within the $\pm4.5$ threshold. This contrasts with the unmasked version, where significant leakage was detected with only 500 traces (see Figure~\ref{fig:dpa_curves}).
+Performance improvements are achieved through:
 
-\begin{figure}[h]
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/bool_rejection_10000_traces.png}
-        \caption{\texttt{bool::rejection}}
-        \label{fig:bool_rejection}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/arith_to_bool_lowbits_10000_traces.png}
-        \caption{\texttt{arith::to::bool::lowbits}}
-        \label{fig:arith_to_bool_lowbits}
-    \end{subfigure}
-    \vfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/arith_to_bool_highbits_10000_traces.png}
-        \caption{\texttt{arith::to::bool::highbits}}
-        \label{fig:arith_to_bool_highbits}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/arith_makehint_10000_traces.png}
-        \caption{\texttt{arith::makehint}}
-        \label{fig:arith_makehint}
-    \end{subfigure}
-    \caption{Evaluation of the Welch's t-test on masked gadgets after 10,000 traces. The t-values remain within the $\pm4.5$ threshold, indicating no detectable first-order leakage.}
-    \label{fig:t-test-masked}
-\end{figure}
+\begin{itemize}
+    \item \textbf{Optimized Gadgets}: New masking gadgets reduce the overhead of critical operations.
+    \item \textbf{Randomized vs.\ Deterministic Signing}: Randomized signing shows significant performance gains over deterministic signing.
+\end{itemize}
 
-\subsubsection{Discussion of Trade-offs}
+For first-order masking ($d=2$), the randomized implementation requires approximately 13.9 million cycles on an ARM Cortex-M4 microcontroller.
 
-While the masking techniques significantly improve side-channel resistance, they introduce computational overhead. The use of a power-of-two modulus mitigates some of this overhead but may have implications for compatibility and standardization, as the original Dilithium specification uses a prime modulus. The trade-off between security and performance must be carefully considered, especially for resource-constrained embedded devices.
+\subsubsection{Feasibility on Embedded Devices}
 
-% \subsubsection{Metrics for Comparison}
+The implementations are practical on embedded devices for lower masking orders. The performance overhead increases with higher masking orders but remains manageable.
 
-% Key metrics from Migliore et al.\ (2019) that can be used for comparison include:
+\subsubsection{Implementation Techniques}
 
-% \begin{itemize}
-%     \item \textbf{Execution Time:} Measured in cycles or microseconds for key operations before and after masking.
-%     \item \textbf{Performance Overhead Factors:} Quantitative factors indicating how much slower the masked implementation is compared to the unmasked version (e.g., $5.6\times$ for first-order masking).
-%     \item \textbf{Side-Channel Leakage Evaluation Results:} Number of traces required to detect leakage in unmasked versus masked implementations.
-%     \item \textbf{Speedup Achieved with Power-of-Two Modulus:} Performance gains in masking operations due to the modulus modification (e.g., $7\times$ to $8\times$ speedup).
-% \end{itemize}
+Key strategies include:
 
-% These metrics can be incorporated into tables and figures to visually compare the effectiveness and efficiency of side-channel countermeasures across different implementations.
+\begin{itemize}
+    \item \textbf{Refined Sensitivity Analysis}: Avoiding unnecessary masking to improve efficiency.
+    \item \textbf{PINI-Compliant Gadgets}: Using Probe-Isolating Non-Interference (PINI) gadgets for secure and composable masking.
+\end{itemize}
 
-\subsection{Heinz et al.\ (2020): First-Order Masked Kyber on ARM Cortex-M4}
+\subsection{Improved Gadgets for the High-Order Masking of Dilithium}
 
-[To be done]
+Coron et al.\ propose new masking gadgets to enhance the efficiency of high-order masking in Dilithium. They focus on reducing the complexity of critical operations and provide security proofs in the probing model.
 
-\subsection{Bos et al.\ (2021): Higher-Order Masking for Kyber}
+\subsubsection{Security Level}
 
-[To be done]
+The gadgets are designed to be secure against high-order side-channel attacks, with proofs ensuring robustness in the $t$-probing model.
 
-\subsection{Coron et al.\ (2023): Improved Masking Gadgets for Dilithium}
+\subsubsection{Performance Metrics}
 
-[To be done]
+Significant performance improvements are reported for small masking orders:
 
-\subsection{Bronchain and Cassiers (2022): Bitslicing Techniques for Lattice-Based KEMs}
+\begin{itemize}
+    \item \textbf{ShiftMod Gadget}: Reduces complexity of arithmetic shifts, improving efficiency.
+    \item \textbf{Boolean-to-Arithmetic Conversion}: Achieves lower operation counts for small $n$.
+\end{itemize}
 
-[To be done]
+However, the complexity increases exponentially with the masking order $n$, limiting practicality for higher orders.
+
+\subsubsection{Feasibility on Embedded Devices}
+
+For small masking orders, the implementations are feasible on embedded devices. The exponential complexity makes higher-order masking less practical on resource-constrained platforms.
+
+\subsubsection{Implementation Techniques}
+
+Innovations include:
+
+\begin{itemize}
+    \item \textbf{ShiftMod Gadget}: Efficient arithmetic shifts modulo $2q$.
+    \item \textbf{Optimized Masking of Decompose Function}: Two methods providing efficiency gains.
+\end{itemize}
 
 \section{Comparative Analysis}
 
-Based on the in-depth analyses, we can compare the implementations across our evaluation criteria:
+We compare the selected implementations based on the key metrics outlined in our methodology.
+
+\subsection{Security Level and Side-Channel Resistance}
+
+\begin{table}[h]
+    \centering
+    \caption{Security Levels of Implementations}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Implementation} & \textbf{Masking Order} & \textbf{Targeted Security}                           \\
+        \midrule
+        Prest et al.\           & $d = 2$ (First-order)  & Protection against single-variable leakage           \\
+        Azouaoui et al.\        & $d = 2$ to $d = 8$     & Higher-order side-channel resistance                 \\
+        Coron et al.\           & Up to $d = 6$          & High-order security with proofs in $t$-probing model \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:security_levels}
+\end{table}
+
+\subsection{Performance Comparison}
+
+\begin{table}[h]
+    \centering
+    \caption{Performance Metrics of Implementations (First-Order Masking)}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Implementation} & \textbf{Execution Time}     & \textbf{Cycle Counts}                 \\
+        \midrule
+        Prest et al.\           & $\approx 2\times$ overhead  & Reduced cycles for critical ops       \\
+        Azouaoui et al.\        & 13.9 million cycles (rand.) & Optimized gadgets improve performance \\
+        Coron et al.\           & Improved for small $n$      & Low operation counts for key gadgets  \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:performance_metrics}
+\end{table}
+
+\subsection{Scalability with Masking Order}
 
 \begin{itemize}
-    \item \textbf{Masking Techniques:} Migliore et al.\ (2019) focus on masking Dilithium using both Boolean and arithmetic masking, introducing specific masked gadgets and modifying the modulus for efficiency. Other works like Heinz et al.\ (2020) and Bos et al.\ (2021) also employ masking but focus on Kyber.
-    \item \textbf{Performance Metrics:} The overhead introduced by masking varies among implementations. Migliore et al.\ report a $5.6\times$ overhead for first-order masking, while Bronchain and Cassiers (2022) achieve up to $1.8\times$ speedup using bitslicing techniques.
-    \item \textbf{Side-Channel Resistance Evaluation:} All implementations validate their side-channel resistance using methods like TVLA or DPA. Migliore et al.\ demonstrate that their masked implementation resists leakage detection even after 10,000 traces.
-    \item \textbf{Algorithmic Modifications:} Migliore et al.\ uniquely propose modifying the modulus to a power of two, whereas others focus on optimizing existing algorithms.
-    \item \textbf{Practicality and Scalability:} The feasibility of these implementations on embedded devices varies, with some requiring significant resources due to higher-order masking or complex gadgets.
+    \item \textbf{Prest et al.}: Focuses on first-order masking; higher orders not addressed.
+    \item \textbf{Azouaoui et al.}: Provides scalable implementations up to $d = 8$; performance overhead increases with $d$.
+    \item \textbf{Coron et al.}: Efficient for small $n$; exponential complexity limits higher-order practicality.
 \end{itemize}
 
-We can visualize these comparisons in tables and graphs, highlighting the trade-offs between security and efficiency in each approach.
+\subsection{Feasibility on Embedded Devices}
 
-% Include any additional figures or tables here as needed.
+All implementations consider embedded platforms:
 
-% Remember to reference the figures and tables in the text.
+\begin{itemize}
+    \item \textbf{Prest et al.}: Demonstrates practicality for first-order masking.
+    \item \textbf{Azouaoui et al.}: Shows acceptable performance for higher-order masking on devices like ARM Cortex-M4.
+    \item \textbf{Coron et al.}: Suitable for small masking orders; higher orders may not be feasible due to resource constraints.
+\end{itemize}
+
+\subsection{Implementation Techniques and Optimizations}
+
+\begin{table}[h]
+    \centering
+    \caption{Implementation Techniques}
+    \begin{tabular}{l p{10cm}}
+        \toprule
+        \textbf{Implementation} & \textbf{Techniques and Optimizations}                                                                           \\
+        \midrule
+        Prest et al.\           & Specialized algorithms for masking polynomial arithmetic; focus on minimizing non-linear operations.            \\
+        Azouaoui et al.\        & Refined sensitivity analysis; PINI-compliant gadgets; performance gains from randomized signing.                \\
+        Coron et al.\           & Introduction of ShiftMod gadget; optimized Boolean-to-arithmetic conversions; security proofs in probing model. \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:implementation_techniques}
+\end{table}
+
+\subsection{Trade-offs Between Security and Performance}
+
+\begin{itemize}
+    \item \textbf{Prest et al.}:
+          \begin{itemize}
+              \item Prioritizes performance for first-order masking.
+              \item Accepts that higher-order masking would incur significant overhead.
+          \end{itemize}
+    \item \textbf{Azouaoui et al.}:
+          \begin{itemize}
+              \item Balances higher-order security with optimized performance.
+              \item Randomized signing improves both security and efficiency.
+          \end{itemize}
+    \item \textbf{Coron et al.}:
+          \begin{itemize}
+              \item Provides strong security proofs and efficiency for small $n$.
+              \item Acknowledges limitations for higher masking orders due to complexity.
+          \end{itemize}
+\end{itemize}
+
+\subsection{Visual Comparison of Performance}
+
+We present a comparative visualization of the operation counts for the Boolean-to-Arithmetic conversion, a critical operation in masked implementations.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                xlabel={Masking Order $d$},
+                ylabel={Operation Count (Thousands)},
+                xmin=2, xmax=8,
+                ymin=0, ymax=90,
+                xtick={2,4,6,8},
+                ytick={0,20,40,60,80},
+                legend pos=north west,
+                ymajorgrids=true,
+                grid style=dashed,
+            ]
+
+            \addplot[
+                color=blue,
+                mark=square,
+            ]
+            coordinates {
+                    (2, 28.41)
+                    (4, 87.82)
+                    (6, 178.25)
+                    (8, 302.35)
+                };
+            \addlegendentry{Prest et al.}
+
+            \addplot[
+                color=red,
+                mark=triangle,
+            ]
+            coordinates {
+                    (2, 8.04)
+                    (4, 21.86)
+                    (6, 42.16)
+                    (8, 68.94)
+                };
+            \addlegendentry{Azouaoui et al.}
+
+            \addplot[
+                color=green,
+                mark=*,
+            ]
+            coordinates {
+                    (2, 1.54)
+                    (4, 6.10)
+                    (6, 17.86)
+                    (8, 61.60)
+                };
+            \addlegendentry{Coron et al.}
+
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Operation Counts for Boolean-to-Arithmetic Conversion at Different Masking Orders}
+    \label{fig:b2a_comparison}
+\end{figure}
+
+The figure illustrates that Coron et al.'s method has lower operation counts for small $d$, but the counts increase rapidly for higher $d$.
+
+\section{Summary and Conclusions}
+
+Our analysis highlights the following:
+
+\begin{itemize}
+    \item \textbf{Prest et al.} offer efficient first-order masking suitable for applications where minimal overhead is acceptable.
+    \item \textbf{Azouaoui et al.} provide scalable higher-order masking with performance optimizations, particularly through randomized signing.
+    \item \textbf{Coron et al.} introduce innovative gadgets that improve efficiency for small masking orders but face limitations for higher orders.
+\end{itemize}
+
+The choice of implementation depends on application requirements:
+
+\begin{itemize}
+    \item For applications requiring only first-order protection, Prest et al.'s methods are appropriate.
+    \item For stronger security needs with acceptable performance overhead, Azouaoui et al.'s implementations are suitable.
+    \item For strong security proofs and efficiency at low masking orders, Coron et al.'s methods offer advantages.
+\end{itemize}
+
+\section{Recommendations for Practical Deployment}
+
+When deploying side-channel resistant implementations of Dilithium, consider:
+
+\begin{itemize}
+    \item \textbf{Security Requirements}: Assess the required masking order based on the threat model.
+    \item \textbf{Performance Constraints}: Evaluate the available computational resources to determine feasible masking techniques.
+    \item \textbf{Randomized vs.\ Deterministic Signing}: Use randomized signing when acceptable to leverage performance benefits.
+    \item \textbf{Implementation Complexity}: Balance the complexity of advanced masking gadgets with the benefits they provide.
+\end{itemize}
+
+Future work may focus on developing methods that reduce the complexity of high-order masking, making them more practical for a wider range of applications.
 

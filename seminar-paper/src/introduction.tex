@@ -1,32 +1,39 @@
+% introduction.tex
+
 \chapter{Introduction}
 \thispagestyle{chapterstart}
 
 \section{Motivation}
 
-The advent of quantum computing presents a formidable challenge to existing cryptographic systems, especially to widely used public-key algorithms such as RSA and \ac{ECC}. These algorithms are rendered vulnerable by quantum algorithms like Shor's, which can solve integer factorization and discrete logarithm problems in polynomial time. As a result, the \ac{NIST} has initiated a standardization process to identify \ac{PQC} algorithms that are secure against both quantum and classical adversaries \cite{NIST24}.
+The rapid advancement of quantum computing technology poses a significant threat to current cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and \ac{ECC}. Quantum algorithms like Shor's algorithm can solve these problems efficiently, rendering classical cryptosystems insecure in the presence of a sufficiently powerful quantum computer. To address this looming threat, the \ac{NIST} initiated a standardization process for \ac{PQC} algorithms that are secure against both quantum and classical attacks.
 
-While lattice-based schemes such as Kyber and Dilithium have emerged as leading candidates due to their strong security assumptions and efficiency, they are also susceptible to \acp{SCA}, particularly on embedded devices. These devices are often constrained in resources and may be physically accessible to attackers, making them more vulnerable to \acp{SCA}, which exploit physical characteristics of cryptographic implementations—such as power consumption and electromagnetic emissions—to uncover sensitive information \cite{Bos21}. This is a critical concern as \acp{SCA} can compromise security even if the underlying cryptographic algorithms remain theoretically sound against quantum attacks.
+Among the leading candidates in this standardization effort are lattice-based schemes like CRYSTALS-Dilithium, a digital signature algorithm known for its strong security foundations and efficient performance on classical computing architectures. However, while Dilithium is designed to be resistant to attacks from quantum computers, its implementations on embedded devices are vulnerable to \acp{SCA}. These attacks exploit physical leakages, such as power consumption or electromagnetic emissions, to extract sensitive information from cryptographic operations.
 
-The importance of side-channel resistance in \ac{PQC} implementations has led to extensive research on countermeasures. For instance, Migliore et al.\ \cite{Migliore19} introduced masking techniques for Dilithium to reduce side-channel leakage, while Heinz et al.\ \cite{Heinz20} presented a first-order masked implementation of Kyber on the \ac{ARM} Cortex-M4 processor, demonstrating the practicality of side-channel resistance on embedded platforms. More recent works, such as those by Bronchain and Cassiers \cite{Bronchain22} and Coron et al.\ \cite{Coron23}, have further advanced the field by optimizing masking conversions and introducing high-order masking gadgets that significantly improve security and efficiency. This seminar paper seeks to build on these contributions by analyzing the performance, security, and practicality of various side-channel resistant implementations for \ac{PQC} schemes.
+Side-channel resistance is especially critical for embedded devices, which often have limited computational resources and are deployed in environments where attackers may have physical access. As a result, enhancing the side-channel resistance of Dilithium implementations is essential for ensuring the security of future cryptographic systems in the quantum era.
 
 \section{Goals}
 
-The primary goal of this seminar paper is to systematically examine and evaluate existing side-channel resistant implementations of lattice-based \ac{PQC} schemes on embedded systems. The key objectives are as follows:
+The primary goal of this seminar paper is to analyze and compare various side-channel resistant implementations of the Dilithium digital signature scheme, focusing on their methodologies, security levels, performance, and feasibility on embedded devices. Specifically, the objectives are:
 
 \begin{itemize}
-    \item \textbf{Introduction of Key Concepts:} Provide an in-depth overview of critical aspects that affect the feasibility, performance, and security of side-channel resistant \ac{PQC} implementations, including masking techniques, bitslicing, and hardware considerations.
-    \item \textbf{Comparative Analysis:} Systematically compare implementations of \ac{PQC} schemes like Kyber and Dilithium concerning their side-channel resistance, performance metrics, and resource utilization on embedded devices.
-    \item \textbf{Evaluation of Countermeasures:} Assess the effectiveness of various side-channel countermeasures, including first-order and higher-order masking, bitslicing, and optimized gadgets, in protecting against \acp{SCA}.
-    \item \textbf{Identification of Trade-offs:} Identify and discuss the trade-offs between security and efficiency in side-channel resistant implementations, offering insights into optimal strategies for secure and performant \ac{PQC} deployment.
+    \item \textbf{In-depth Analysis}: Provide a detailed examination of selected implementations of side-channel resistant Dilithium, highlighting the techniques used to achieve security and performance improvements.
+    \item \textbf{Comparative Evaluation}: Systematically compare the implementations in terms of security levels (masking orders), performance metrics (execution time, operation counts), and practical considerations for embedded systems.
+    \item \textbf{Discussion of Trade-offs}: Identify and discuss the trade-offs between security and performance inherent in different masking techniques and implementations.
+    \item \textbf{Insights for Deployment}: Offer insights into optimal strategies for deploying secure and efficient Dilithium implementations in real-world, resource-constrained environments.
 \end{itemize}
 
-By achieving these goals, this paper aims to contribute to a comprehensive understanding of the current landscape of side-channel resistant \ac{PQC} implementations, highlighting the advancements and challenges in deploying quantum-resistant cryptographic solutions in resource-constrained environments.
+By achieving these goals, this paper aims to contribute to a better understanding of the current state of side-channel resistant implementations of Dilithium and provide guidance for future research and development in this area.
 
 \section{Structure of the Paper}
 
 This paper is structured as follows:
+
 \begin{itemize}
-    \item \textbf{Chapter 2 - Background:} A comprehensive overview of post-quantum cryptography, the quantum threat to classical cryptosystems, and an introduction to side-channel attacks. This chapter also covers the primary countermeasures developed for enhancing the side-channel resistance of \ac{PQC} implementations.
-    \item \textbf{Chapter 3 - Analysis:} An analysis of the methodology used to evaluate side-channel resistance and a comparative analysis of various implementations of \ac{PQC} schemes, such as Kyber and Dilithium, in terms of security level, performance, and practicality.
-    \item \textbf{Chapter 4 - Conclusion:} A summary of the findings, a discussion of the trade-offs between security and efficiency, and an outlook on potential future directions in side-channel resistance for \ac{PQC} schemes.
+    \item \textbf{Chapter 2 - Background}: Provides an overview of post-quantum cryptography and the quantum threats to classical cryptosystems. It introduces side-channel attacks and discusses common countermeasures, with a focus on masking techniques relevant to Dilithium.
+    \item \textbf{Chapter 3 - Analysis}: Presents an in-depth analysis of selected side-channel resistant implementations of Dilithium. It examines the methodologies, security proofs, performance metrics, and practical considerations of each implementation.
+    \item \textbf{Chapter 4 - Comparative Analysis}: Compares the analyzed implementations, highlighting their strengths and weaknesses. It discusses the trade-offs between security levels and performance, and their implications for practical deployment.
+    \item \textbf{Chapter 5 - Conclusion}: Summarizes the findings, discusses the implications for deploying side-channel resistant Dilithium implementations, and suggests directions for future research.
 \end{itemize}
+
+By following this structure, the paper systematically builds from foundational concepts to detailed analysis and comparison, culminating in conclusions that inform both academic and practical perspectives on the topic.
+
