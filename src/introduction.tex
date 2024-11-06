@@ -5,9 +5,9 @@
 
 \section{Motivation}
 
-The rapid advancement of quantum computing technology poses a significant threat to current cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and \ac{ECC}. Quantum algorithms like Shor's algorithm can solve these problems efficiently, rendering classical cryptosystems insecure. To address this threat, the \ac{NIST} initiated a standardization process for \ac{PQC} algorithms secure against both quantum and classical attacks.
+The rapid advancement of quantum computing technology poses a significant threat to current cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and \ac{ECC}. Quantum algorithms like Shor's algorithm can solve these problems efficiently, rendering classical cryptosystems insecure. To address this threat, the \ac{NIST} initiated a standardization process for \ac{PQC} algorithms that are secure against both quantum and classical attacks.
 
-Among the leading candidates are lattice-based schemes like CRYSTALS-Dilithium, known for strong security foundations and efficient performance. However, while Dilithium is resistant to quantum attacks, its implementations on embedded devices are vulnerable to \acp{SCA}, which exploit physical leakages to extract sensitive information.
+Among the winning candidates in this process is the lattice-based scheme CRYSTALS-Dilithium, known for its strong security foundations and efficient performance. However, while Dilithium is resistant to quantum attacks, its implementations on embedded devices are vulnerable to \acp{SCA}, which exploit physical leakages to extract sensitive information.
 
 Side-channel resistance is critical for embedded devices, often with limited resources and physical accessibility. Enhancing the side-channel resistance of Dilithium implementations is essential for securing future cryptographic systems in the quantum era.
 

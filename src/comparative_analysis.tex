@@ -11,8 +11,9 @@ A critical factor in side-channel resistant implementations is the level of secu
 
 \begin{table}[h]
     \centering
+    \renewcommand{\arraystretch}{1.2} % Adjust row spacing
     \caption{Security Levels of Implementations}
-    \begin{tabular}{l p{3cm} p{6cm}}
+    \begin{tabular}{l | c | p{7cm}} % Adjust column width for the third column
         \toprule
         \textbf{Implementation}            & \textbf{Masking Order} & \textbf{Targeted Security}                           \\
         \midrule
@@ -24,6 +25,9 @@ A critical factor in side-channel resistant implementations is the level of secu
     \label{tab:security_levels}
 \end{table}
 
+
+
+
 As shown in Table~\ref{tab:security_levels}, Migliore et al.\ focus on first-order masking, providing basic protection against side-channel attacks. Azouaoui et al.\ extend this security to higher-order masking up to $d=8$, offering robust resistance against sophisticated attacks that exploit leakages from multiple variables. Coron et al.\ aim for high-order security, providing proofs in the $t$-probing model to ensure robustness against attackers capable of observing multiple computation points.
 
 \section{Performance Metrics Comparison}
@@ -32,24 +36,27 @@ Performance is crucial for the feasibility of side-channel resistant implementat
 
 \begin{table}[h]
     \centering
+    \renewcommand{\arraystretch}{1.2} % Adjust row spacing
     \caption{Performance Metrics of Implementations (First-Order Masking)}
-    \begin{tabular}{l p{4.5cm} p{5.5cm}}
+    \begin{tabular}{l | p{5cm} | p{6cm}} % Adjust column widths
         \toprule
-        \textbf{Implementation}            & \textbf{Execution Time Overhead}                 & \textbf{Cycle Counts}                                                                \\
+        \textbf{Implementation}            & \multicolumn{1}{c|}{\textbf{Execution Time Overhead}} & \textbf{Cycle Counts}                                                                \\
         \midrule
-        Migliore et al.\ \cite{Migliore19} & $\approx 5.6\times$ compared to unmasked version & Optimized with power-of-two modulus                                                  \\
-        Azouaoui et al.\ \cite{Azouaoui22} & 13.9 million cycles (randomized signing)         & Gains over deterministic signing by avoiding masked Keccak                           \\
-        Coron et al.\ \cite{Coron23}       & Improved for small masking orders                & Low operation counts for key gadgets at small $d$, but complexity increases with $d$ \\
+        Migliore et al.\ \cite{Migliore19} & $\approx 5.6\times$ compared to unmasked version      & Optimized with power-of-two modulus                                                  \\
+        Azouaoui et al.\ \cite{Azouaoui22} & 13.9 million cycles (randomized signing)              & Gains over deterministic signing by avoiding masked Keccak                           \\
+        Coron et al.\ \cite{Coron23}       & Improved for small masking orders                     & Low operation counts for key gadgets at small $d$, but complexity increases with $d$ \\
         \bottomrule
     \end{tabular}
     \label{tab:performance_metrics}
 \end{table}
 
+
+
 Migliore et al.'s implementation incurs a moderate execution time overhead but achieves acceptable performance by using a power-of-two modulus, which simplifies computations and reduces cycle counts. Azouaoui et al.\ report significant gains with randomized signing compared to deterministic signing, mainly by avoiding the costly masked Keccak function. Coron et al.\ improve performance at small masking orders, although complexity rises exponentially as the masking order increases.
 
 \section{Scalability with Masking Order}
 
-Scalability is essential for maintaining performance while increasing security levels. Figure~\ref{fig:b2a_comparison} illustrates how the operation counts for Boolean-to-Arithmetic (B2A) conversion, a critical operation in masked implementations, scale with the masking order for each implementation.
+Scalability is essential for maintaining performance while increasing security levels. Figure~\ref{fig:b2a_comparison} illustrates how the operation counts for \ac{B2A} conversion, a critical operation in masked implementations, scale with the masking order for each implementation.
 
 \begin{figure}[h]
     \centering
@@ -116,8 +123,9 @@ Feasibility on embedded devices depends on balancing security requirements with 
 
 \begin{table}[h]
     \centering
+    \renewcommand{\arraystretch}{1.2} % Adjust row spacing
     \caption{Feasibility of Implementations on Embedded Devices}
-    \begin{tabular}{l p{10cm}}
+    \begin{tabular}{l | p{10cm}} % Add a vertical line for separation
         \toprule
         \textbf{Implementation}            & \textbf{Feasibility Considerations}                                                                                                                     \\
         \midrule
@@ -129,6 +137,7 @@ Feasibility on embedded devices depends on balancing security requirements with 
     \label{tab:feasibility}
 \end{table}
 
+
 Azouaoui et al.\ achieve feasible implementations even at higher masking orders by optimizing masking gadgets and leveraging randomized signing to reduce computational overhead. Conversely, Coron et al.'s implementation is limited to small masking orders on embedded devices due to increased complexity and resource requirements at higher orders.
 
 \section{Implementation Techniques and Optimizations}
@@ -137,8 +146,9 @@ The specific techniques and optimizations employed significantly impact both sec
 
 \begin{table}[h]
     \centering
+    \renewcommand{\arraystretch}{1.2} % Adjust row spacing
     \caption{Implementation Techniques and Optimizations}
-    \begin{tabular}{l p{11cm}}
+    \begin{tabular}{l | p{11cm}} % Add a vertical line for separation
         \toprule
         \textbf{Implementation}            & \textbf{Techniques and Optimizations}                                                                                                                                                                     \\
         \midrule
@@ -149,6 +159,7 @@ The specific techniques and optimizations employed significantly impact both sec
     \end{tabular}
     \label{tab:implementation_techniques}
 \end{table}
+
 
 Azouaoui et al.'s refined sensitivity analysis ensures that sensitive variables are protected, avoiding both insecurity and unnecessary overhead. Their new masking gadgets are specifically designed for Dilithium's operations, improving efficiency. Randomized signing allows them to bypass the performance bottleneck associated with masking the deterministic Keccak function.
 
@@ -162,14 +173,12 @@ Coron et al.\ \cite{Coron23} contribute by providing strong security proofs for 
 
 In summary, Migliore et al.\ prioritize performance at the cost of modifying the scheme, Azouaoui et al.\ balance high-order security with optimized efficiency and standard compliance, and Coron et al.\ provide strong security at low masking orders but with scalability constraints. Each approach addresses the trade-off between security and performance differently, underscoring the importance of context-dependent choices in secure cryptographic implementations.
 
-\section{Synthesis and Discussion}
+\section{Synthesis, Discussion, and Conclusion}
 
 Our comparative analysis highlights that Azouaoui et al.'s implementation offers the best balance between high security and performance, particularly for higher-order masking. Their approach maintains compliance with the standard Dilithium scheme and is feasible on embedded devices, making it suitable for practical deployment.
 
 Migliore et al.'s implementation is advantageous when only first-order masking is required and performance is a priority. However, the modification of the scheme by using a power-of-two modulus may present challenges in terms of standardization and interoperability.
 
 Coron et al.'s implementation is valuable for its strong security proofs and efficiency at low masking orders. Nonetheless, the exponential increase in complexity at higher masking orders limits its practicality for applications requiring higher levels of side-channel resistance.
-
-\section{Conclusion}
 
 By examining the implementations across the key aspects of security level, performance metrics, feasibility on embedded devices, implementation techniques, and trade-offs, we conclude that Azouaoui et al.'s implementation provides the most practical solution for achieving high levels of side-channel resistance in Dilithium without compromising performance or standard compliance. Their use of refined sensitivity analysis, optimized masking gadgets, and randomized signing effectively addresses the challenges of masking Dilithium on embedded devices.

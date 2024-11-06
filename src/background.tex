@@ -5,25 +5,25 @@
 
 \section{Post-Quantum Cryptography and CRYSTALS-Dilithium}
 
-The advent of practical quantum computers poses a significant threat to classical cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and Elliptic Curve Cryptography (\ac{ECC}). Quantum algorithms like Shor's algorithm can efficiently solve these problems, rendering traditional public-key cryptosystems insecure in the presence of quantum adversaries.
+The advent of practical quantum computers poses a significant threat to classical cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and \ac{ECC}. Quantum algorithms like Shor's algorithm can efficiently solve these problems, rendering traditional public-key cryptosystems insecure in the presence of quantum adversaries.
 
-To address this threat, the National Institute of Standards and Technology (\ac{NIST}) initiated a standardization process to evaluate and select quantum-resistant cryptographic algorithms \cite{NIST24}. Among the leading candidates are lattice-based schemes, which rely on hard mathematical problems believed to be resistant to quantum attacks.
+To address this threat, the \ac{NIST} initiated a standardization process to evaluate and select quantum-resistant cryptographic algorithms \cite{NIST24}. Among the leading candidates are lattice-based schemes, which rely on hard mathematical problems believed to be resistant to quantum attacks.
 
-CRYSTALS-Dilithium is one such lattice-based digital signature scheme selected by NIST for standardization \cite{NIST24}. It is built upon the hardness of the Module Learning With Errors (MLWE) problem, involving solving systems of noisy linear equations over polynomial rings. Dilithium operates over the polynomial ring $\mathbb{Z}_q[X]/(X^n + 1)$, where $q$ is a prime modulus and $n$ is a power of two. The scheme leverages structured lattices to achieve efficient key generation, signing, and verification processes.
+CRYSTALS-Dilithium is one such lattice-based digital signature scheme selected by NIST for standardization \cite{NIST24}. It is built upon the hardness of the \ac{MLWE} problem, involving solving systems of noisy linear equations over polynomial rings. Dilithium operates over the polynomial ring $\mathbb{Z}_q[X]/(X^n + 1)$, where $q$ is a prime modulus and $n$ is a power of two. The scheme leverages structured lattices to achieve efficient key generation, signing, and verification processes.
 
-Key operations in Dilithium include polynomial arithmetic, sampling of random polynomials, and decomposition functions that split polynomial coefficients. These operations are often implemented efficiently using Number Theoretic Transforms (NTTs) and are critical for the scheme's performance and security.
+Key operations in Dilithium include polynomial arithmetic, sampling of random polynomials, and decomposition functions that split polynomial coefficients. These operations are often implemented efficiently using \acp{NTT} and are critical for the scheme's performance and security.
 
 While Dilithium is designed to be secure against quantum adversaries, its implementations can be vulnerable to side-channel attacks if not properly protected, especially during operations involving secret keys and sensitive intermediate values.
 
 \section{Side-Channel Attacks and Vulnerabilities}
 
-Side-channel attacks (\acp{SCA}) exploit physical leakages from cryptographic implementations to extract sensitive information. Unlike traditional cryptanalysis, which targets the mathematical structure of cryptographic algorithms, side-channel analysis leverages information such as timing variations, power consumption, and electromagnetic emissions produced during cryptographic operations.
+\acp{SCA} exploit physical leakages from cryptographic implementations to extract sensitive information. Unlike traditional cryptanalysis, which targets the mathematical structure of cryptographic algorithms, side-channel analysis leverages information such as timing variations, power consumption, and electromagnetic emissions produced during cryptographic operations.
 
 Common types of side-channel attacks include:
 
 \begin{itemize}
     \item \textbf{Timing Attacks}: Analyze variations in execution time to infer secret data.
-    \item \textbf{Power Analysis Attacks}: Measure power consumption during computation; includes Simple Power Analysis (SPA) and Differential Power Analysis (DPA).
+    \item \textbf{Power Analysis Attacks}: Measure power consumption during computation; includes \ac{SPA} and \ac{DPA}.
     \item \textbf{Electromagnetic Attacks}: Capture electromagnetic emissions to recover secret information.
 \end{itemize}
 
