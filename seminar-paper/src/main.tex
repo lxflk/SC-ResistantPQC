@@ -14,13 +14,13 @@
 \section*{Abstract}
 \thispagestyle{abstract}
 
-The security of cryptographic systems against side-channel attacks is a critical concern, especially with the advent of quantum computing threatening classical cryptographic schemes. Lattice-based post-quantum cryptographic schemes like CRYSTALS-Dilithium are leading candidates for future standards. However, their implementations are vulnerable to side-channel attacks, particularly on embedded devices. This paper systematically analyzes and compares several side-channel resistant implementations of Dilithium, focusing on masking techniques and their impact on security and performance. We provide an in-depth analysis of three key implementations, discussing their methodologies, effectiveness, and practicality on embedded platforms. Our comparative study highlights the trade-offs between security levels and performance, offering insights into optimal strategies for deploying secure and efficient post-quantum cryptography in resource-constrained environments.
+The security of cryptographic systems against side-channel attacks is a critical concern, especially with the advent of quantum computing threatening classical cryptographic schemes. Lattice-based post-quantum cryptographic schemes like CRYSTALS-Dilithium are leading candidates for future standards. However, their implementations are vulnerable to side-channel attacks, particularly on embedded devices. This paper systematically analyzes and compares several side-channel resistant implementations of Dilithium, focusing on masking techniques and their impact on security and performance. We provide an in-depth analysis of three key implementations, discussing their methodologies, effectiveness, and practicality on embedded platforms. Our comparative study highlights the trade-offs between security levels and performance, offering insights into optimal strategies for deploying secure and efficient post-quantum cryptography in resource-constrained environments. Notably, we emphasize the importance of refined sensitivity analyses and the advantages of randomized signing in achieving efficient and secure implementations.
 
 % Table of contents
 \tableofcontents
 \thispagestyle{contents}
 
-% List of acronyms with corrected page handling
+% List of acronyms
 \chapter*{Acronyms}
 \thispagestyle{acronyms}
 \addcontentsline{toc}{chapter}{Acronyms}
@@ -40,15 +40,20 @@ The security of cryptographic systems against side-channel attacks is a critical
     \acro{AES}{Advanced Encryption Standard}
     \acro{FO}{Fujisaki-Okamoto}
     \acro{ILWE}{Integer Learning with Errors}
+    \acro{MLWE}{Module Learning with Errors}
+    \acro{LWE}{Learning with Errors}
+    \acro{LWR}{Learning with Rounding}
+    \acro{NTT}{Number Theoretic Transform}
 \end{acronym}
 
 % Include all chapters as .tex files
 \input{introduction}
 \input{background}
 \input{analysis}
+\input{comparative_analysis}
 \input{conclusion}
 
-% List of figures and tables without extra pages
+% List of figures and tables
 \newpage
 \listoffigures
 \thispagestyle{listsoffigures}

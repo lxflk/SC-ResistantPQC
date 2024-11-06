@@ -8,34 +8,36 @@
 This paper has analyzed and compared three significant implementations of side-channel resistant Dilithium:
 
 \begin{enumerate}
-    \item \textbf{Prest et al.\ (2021)}: Focused on efficient first-order masking techniques for Dilithium, demonstrating acceptable performance on embedded devices.
-    \item \textbf{Azouaoui et al.\ (2022)}: Extended masking to higher orders, up to \( d = 8 \), and introduced optimized gadgets. They highlighted the benefits of randomized signing over deterministic signing in terms of both security and performance.
-    \item \textbf{Coron et al.\ (2023)}: Introduced novel gadgets like ShiftMod for efficient high-order masking, providing strong security proofs and practical performance improvements for small masking orders.
+    \item \textbf{Migliore et al.\ (2019) \cite{Migliore19}}: Focused on efficient first-order masking techniques, proposing a power-of-two modulus to improve efficiency. However, their sensitivity analysis had flaws leading to potential insecurities and inefficiencies.
+    \item \textbf{Azouaoui et al.\ (2022) \cite{Azouaoui22}}: Revisited the sensitivity analysis, correcting misconceptions, and introduced improved masking gadgets. They extended masking to higher orders up to \( d = 8 \) and highlighted the benefits of randomized signing.
+    \item \textbf{Coron et al.\ (2023) \cite{Coron23}}: Introduced novel gadgets like ShiftMod for efficient high-order masking, providing strong security proofs and practical improvements for small masking orders. They acknowledged scalability limitations at higher orders.
 \end{enumerate}
 
-Our analysis revealed that while all three implementations aim to enhance side-channel resistance, they differ in their approaches, targeted security levels, and performance trade-offs. Prest et al.\ prioritize performance for first-order masking, making it suitable for applications where minimal overhead is acceptable. Azouaoui et al.\ provide scalable higher-order masking, emphasizing the importance of refined sensitivity analysis and the advantages of randomized signing. Coron et al.\ offer innovative solutions for high-order masking with strong security guarantees but acknowledge limitations in practicality for large masking orders due to exponential complexity.
+Our analysis revealed that while all aim to enhance side-channel resistance, they differ in approaches, targeted security levels, and performance trade-offs. Migliore et al.\ prioritize performance for first-order masking but modify the scheme, affecting standardization. Azouaoui et al.\ provide scalable higher-order masking, emphasizing refined sensitivity analysis to avoid insecurity and overhead. Coron et al.\ offer innovative solutions with strong security guarantees but face practical limitations due to increased complexity at higher masking orders.
 
 \section{Discussion of Trade-offs}
 
-The primary trade-offs identified between security and performance include:
+The primary trade-offs between security and performance include:
 
 \begin{itemize}
-    \item \textbf{Masking Order vs. Performance}: Higher-order masking provides stronger security against sophisticated side-channel attacks but incurs significant computational overhead, making it less practical for resource-constrained devices.
-    \item \textbf{Randomized vs. Deterministic Signing}: Randomized signing reduces the need for masking complex functions like hash operations, leading to better performance and security. However, deterministic signing may be preferred in applications requiring reproducibility.
-    \item \textbf{Algorithm Complexity}: Innovative gadgets like those introduced by Coron et al.\ improve efficiency for small masking orders but may not scale well for higher orders due to increased complexity.
+    \item \textbf{Masking Order vs.\ Performance}: Higher-order masking provides stronger security but incurs significant overhead.
+    \item \textbf{Modification of the Scheme}: Migliore et al.'s use of a power-of-two modulus simplifies masking but may affect compliance and security proofs.
+    \item \textbf{Randomized vs.\ Deterministic Signing}: Randomized signing reduces the need for masking complex computations, leading to better performance and security.
+    \item \textbf{Algorithm Complexity}: Innovative gadgets improve efficiency at small masking orders but may not scale well due to complexity.
 \end{itemize}
 
-These trade-offs highlight the need to balance security requirements with practical constraints, choosing appropriate masking techniques based on the specific application and acceptable performance overhead.
+These trade-offs highlight the need to balance security requirements with practical constraints.
 
 \section{Implications for Deployment}
 
-For practitioners and developers aiming to implement side-channel resistant Dilithium in real-world applications, the following considerations are important:
+For implementing side-channel resistant Dilithium:
 
 \begin{itemize}
-    \item \textbf{Application Requirements}: Assess the required security level and acceptable performance overhead. For applications where first-order side-channel resistance suffices, methods like those of Prest et al.\ may be adequate.
-    \item \textbf{Resource Constraints}: Evaluate the computational and memory resources of the target platform. High-order masking may not be feasible on devices with limited capabilities.
-    \item \textbf{Security Proofs}: Consider implementations with strong security proofs, especially for applications requiring high assurance, even if it comes at the cost of increased complexity.
-    \item \textbf{Randomized Signing}: Where acceptable, prefer randomized signing to leverage performance and security benefits, as demonstrated by Azouaoui et al.
+    \item \textbf{Assess Security Needs}: Determine the required masking order based on the threat model.
+    \item \textbf{Consider Standard Compliance}: Be cautious about modifying the original scheme.
+    \item \textbf{Optimize for Resources}: Use optimized gadgets and randomized signing to make higher-order masking feasible.
+    \item \textbf{Prioritize Security Proofs}: Implementations with strong security proofs provide higher assurance.
+    \item \textbf{Prefer Randomized Signing}: When acceptable, to leverage performance and security benefits.
 \end{itemize}
 
 \section{Future Work}
@@ -43,8 +45,9 @@ For practitioners and developers aiming to implement side-channel resistant Dili
 Future research can explore:
 
 \begin{itemize}
-    \item \textbf{Scalable High-Order Masking}: Develop methods to reduce the complexity of high-order masking gadgets, making them practical for higher masking orders.
-    \item \textbf{Hardware Support}: Investigate hardware acceleration and support for masking operations to improve performance on embedded devices.
-    \item \textbf{Unified Frameworks}: Create unified frameworks that combine the strengths of various approaches, offering configurable security levels and optimized performance.
-    \item \textbf{Side-Channel Analysis Tools}: Enhance tools for side-channel analysis and verification to aid in the development of secure implementations.
+    \item \textbf{Optimizing Masking Gadgets}: Develop more efficient gadgets scalable to higher orders.
+    \item \textbf{Alternative Schemes}: Investigate other post-quantum signature schemes for better trade-offs.
+    \item \textbf{Hardware Support}: Explore hardware acceleration for masking operations.
+    \item \textbf{Combined Countermeasures}: Integrate masking with other techniques to enhance security.
+    \item \textbf{Comprehensive Security Analysis}: Include both side-channel and fault injection attacks in analyses.
 \end{itemize}
