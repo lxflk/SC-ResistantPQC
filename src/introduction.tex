@@ -5,34 +5,32 @@
 
 \section{Motivation}
 
-The rapid advancement of quantum computing technology poses a significant threat to current cryptographic systems, particularly those based on integer factorization and discrete logarithm problems, such as RSA and \ac{ECC}. Quantum algorithms like Shor's algorithm can solve these problems efficiently, rendering classical cryptosystems insecure. To address this threat, the \ac{NIST} initiated a standardization process for \ac{PQC} algorithms that are secure against both quantum and classical attacks.
+Advancements in quantum computing pose a significant threat to current cryptographic systems, particularly those based on number-theoretic problems like RSA and elliptic curve cryptography (ECC). To counter this threat, new cryptographic algorithms resistant to quantum attacks are being developed and standardized. Among these post-quantum cryptography (PQC) schemes, the CRYSTALS-Dilithium lattice-based digital signature algorithm stands out for its strong security foundations and efficient performance.
 
-Among the winning candidates in this process is the lattice-based scheme CRYSTALS-Dilithium, known for its strong security foundations and efficient performance. However, while Dilithium is resistant to quantum attacks, its implementations on embedded devices are vulnerable to \acp{SCA}, which exploit physical leakages to extract sensitive information.
+However, while Dilithium is theoretically secure against quantum attacks, practical implementations—especially on embedded devices—can be vulnerable to side-channel attacks (SCAs). SCAs exploit physical leakages, such as timing information, power consumption, and electromagnetic emissions, to extract sensitive data from cryptographic operations. Embedded devices are particularly at risk due to their limited resources and physical accessibility. Ensuring side-channel resistance in implementations of schemes like Dilithium is therefore crucial for maintaining security in the post-quantum era.
 
-Side-channel resistance is critical for embedded devices, often with limited resources and physical accessibility. Enhancing the side-channel resistance of Dilithium implementations is essential for securing future cryptographic systems in the quantum era.
+\section{Objectives and Approach}
 
-\section{Goals}
-
-The primary goal of this paper is to analyze and compare various side-channel resistant implementations of the Dilithium digital signature scheme, focusing on methodologies, security levels, performance, and feasibility on embedded devices. Specifically, the objectives are:
+The primary objective of this paper is to analyze and compare side-channel resistant implementations of the CRYSTALS-Dilithium scheme, focusing on the feasibility and performance of various masking techniques on embedded devices. Specifically, the paper aims to:
 
 \begin{itemize}
-    \item \textbf{In-depth Analysis}: Examine selected implementations, highlighting techniques used for security and performance improvements.
-    \item \textbf{Comparative Evaluation}: Compare implementations in terms of security levels (masking orders), performance metrics, and practical considerations.
-    \item \textbf{Discussion of Trade-offs}: Identify and discuss trade-offs between security and performance in different masking techniques.
-    \item \textbf{Insights for Deployment}: Offer strategies for deploying secure and efficient Dilithium implementations in resource-constrained environments.
+    \item \textbf{Introduce Key Aspects}: Present the most important factors affecting the feasibility and performance of side-channel resistant implementations of post-quantum schemes.
+    \item \textbf{Visualize and Compare Implementations}: Analyze existing masked implementations of Dilithium regarding these aspects, using visualizations to aid comparison.
+    \item \textbf{Assess Practicality for Embedded Devices}: Evaluate the feasibility of these implementations on embedded platforms, considering resource constraints and performance requirements.
+    \item \textbf{Provide Recommendations}: Offer insights and strategies for deploying secure and efficient side-channel resistant PQC implementations in resource-constrained environments.
 \end{itemize}
 
-By achieving these goals, this paper aims to contribute to understanding side-channel resistant implementations of Dilithium and guide future research.
+Through detailed analysis and comparison, this paper seeks to address the critical trade-offs involved in designing side-channel resistant post-quantum cryptography suitable for real-world applications.
 
 \section{Structure of the Paper}
 
-This paper is structured as follows:
+The paper is structured as follows:
 
 \begin{itemize}
-    \item \textbf{Chapter 2 - Background}: Provides an overview of post-quantum cryptography and quantum threats, introduces side-channel attacks, and discusses masking techniques relevant to Dilithium.
-    \item \textbf{Chapter 3 - Analysis}: Presents an in-depth analysis of selected side-channel resistant implementations of Dilithium, examining methodologies and practical considerations.
-    \item \textbf{Chapter 4 - Comparative Analysis}: Compares the analyzed implementations, highlighting strengths and weaknesses, discussing trade-offs, and implications for deployment.
-    \item \textbf{Chapter 5 - Conclusion}: Summarizes the findings, discusses implications for deploying side-channel resistant Dilithium implementations, and suggests directions for future research.
+    \item \textbf{Chapter 2 - Background}: Provides an overview of post-quantum cryptography, introduces CRYSTALS-Dilithium, and discusses side-channel attacks and masking techniques relevant to Dilithium.
+    \item \textbf{Chapter 3 - Analysis}: Presents an in-depth analysis of selected side-channel resistant implementations of Dilithium, detailing their methodologies, security measures, and performance considerations.
+    \item \textbf{Chapter 4 - Comparative Analysis}: Compares the analyzed implementations based on their masking techniques, security levels, performance, scalability, and feasibility on embedded devices, highlighting strengths, weaknesses, and trade-offs.
+    \item \textbf{Chapter 5 - Conclusion}: Summarizes the findings, discusses optimal strategies for deploying side-channel resistant PQC, and suggests directions for future research.
 \end{itemize}
 
-By following this structure, the paper builds from foundational concepts to detailed analysis and comparison, culminating in conclusions that inform both academic and practical perspectives.
+This structure allows for a systematic exploration from foundational concepts to detailed analysis, culminating in practical recommendations for enhancing side-channel resistance in post-quantum cryptography on embedded platforms.
