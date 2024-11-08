@@ -3,35 +3,12 @@
 \chapter{Conclusion}
 \thispagestyle{chapterstart}
 
-\section{Summary and Discussion of Findings}
+In this paper, we analyzed and compared several side-channel resistant implementations of the CRYSTALS-Dilithium digital signature scheme, focusing on the most important aspects affecting feasibility and performance on embedded devices. Our evaluation centered on security levels achieved (masking order), performance metrics, implementation techniques, and the trade-offs between security and efficiency.
 
-In this paper, we analyzed and compared three significant side-channel resistant implementations of the CRYSTALS-Dilithium digital signature scheme, focusing on their feasibility and performance on embedded devices. Our evaluation centered on the most important aspects affecting these implementations: security level (masking order), performance metrics, feasibility on embedded devices, implementation techniques, and the trade-offs between security and performance.
+Our comparative analysis revealed that while all implementations aim to enhance side-channel resistance, they differ in their approaches and trade-offs. Migliore et al.\ \cite{Migliore19} introduced a first-order masked implementation using a power-of-two modulus to simplify masking and improve efficiency. However, modifying the original Dilithium scheme may affect standardization and security proofs. Azouaoui et al.\ \cite{Azouaoui22} provided a refined sensitivity analysis and developed optimized masking gadgets tailored for Dilithium, supporting higher-order masking up to $d=8$ without altering the scheme, making their implementation suitable for practical deployment on embedded devices. Coron et al.\ \cite{Coron23} proposed innovative masking gadgets like the ShiftMod gadget, achieving efficiency improvements at small masking orders, but facing scalability limitations due to exponential complexity at higher orders.
 
-\begin{itemize}
-    \item \textbf{Migliore et al.\ (2019) \cite{Migliore19}} introduced a first-order masked implementation using a power-of-two modulus to simplify masking and improve efficiency. While their approach offers acceptable performance for first-order masking, it involves modifying the original Dilithium scheme, which may affect standardization and security proofs.
-    \item \textbf{Azouaoui et al.\ (2022) \cite{Azouaoui22}} provided a refined sensitivity analysis and developed optimized masking gadgets tailored for Dilithium, supporting higher-order masking up to $d=8$. They demonstrated that randomized signing improves both security and performance by reducing the need for masking complex deterministic computations. Their implementation maintains compliance with the standard Dilithium scheme and is feasible on embedded devices.
-    \item \textbf{Coron et al.\ (2023) \cite{Coron23}} proposed innovative masking gadgets, such as the ShiftMod gadget, and provided strong security proofs in the $t$-probing model. Their implementation achieves efficiency improvements at small masking orders but faces scalability limitations due to exponential complexity at higher orders.
-\end{itemize}
+In terms of feasibility and performance, Azouaoui et al.'s implementation offers the best balance, providing strong side-channel resistance with reasonable performance on embedded devices, and maintaining compliance with the standard Dilithium parameters. Their use of optimized gadgets and randomized signing reduces computational overhead and simplifies the masking of complex operations.
 
-Our comparative analysis revealed that while all implementations aim to enhance side-channel resistance, they differ in their approaches and trade-offs. Azouaoui et al.'s implementation stands out for its balance between high security and performance, particularly for higher-order masking without modifying the original scheme. The use of optimized gadgets and randomized signing makes it suitable for practical deployment on embedded devices.
+Our findings highlight that achieving side-channel resistance in post-quantum cryptographic schemes requires careful consideration of masking techniques and implementation strategies. Key aspects affecting feasibility and performance include the masking order, efficiency of masking gadgets, compliance with standard parameters, and the specific characteristics of the target embedded devices. By focusing on these aspects, practitioners can balance security and performance to deploy side-channel resistant Dilithium implementations effectively in real-world applications.
 
-\section{Recommendations for Practical Deployment}
-
-Based on our findings, we recommend the following for practitioners aiming to implement side-channel resistant Dilithium:
-
-\begin{itemize}
-    \item \textbf{Assess Security Requirements}: Determine the necessary masking order based on the threat model and required side-channel resistance level. For higher-order security, Azouaoui et al.'s implementation is preferable.
-    \item \textbf{Maintain Scheme Compliance}: Avoid modifying the original Dilithium scheme to ensure standards compliance, interoperability, and security proof validity. This favors implementations that adhere to the standard, like Azouaoui et al.
-    \item \textbf{Leverage Randomized Signing}: Use randomized signing to enhance security and performance, as it reduces the need for masking complex deterministic functions and lowers computational overhead.
-    \item \textbf{Optimize for Embedded Devices}: Employ optimized masking gadgets and techniques to achieve acceptable performance on resource-constrained platforms. Azouaoui et al.'s use of PINI-compliant gadgets and efficient masking strategies exemplify this approach.
-    \item \textbf{Consider Security Proofs}: Where high assurance is required, select implementations with strong security proofs in appropriate models, as provided by Coron et al. However, be mindful of trade-offs in performance and scalability.
-\end{itemize}
-
-By carefully considering these recommendations, practitioners can balance security and performance to deploy side-channel resistant Dilithium implementations effectively in real-world applications.
-
-\section{Concluding Remarks}
-
-Enhancing the side-channel resistance of post-quantum cryptographic schemes like Dilithium is crucial for secure deployments in the quantum era, especially on embedded devices. Our analysis demonstrates that balancing high security and acceptable performance is feasible through careful selection of masking techniques and implementation strategies. Notably, the refined sensitivity analysis, optimized masking gadgets, and use of randomized signing by Azouaoui et al. provide strong side-channel resistance without sacrificing performance or standards compliance.
-
-Future work should focus on further optimizing masking techniques to reduce computational overhead, improving scalability for higher-order masking, and exploring additional countermeasures to strengthen security against side-channel attacks. By refining these implementations, we can ensure post-quantum cryptographic schemes remain robust and practical for widespread adoption in an increasingly quantum-aware world.
-
+Enhancing the side-channel resistance of post-quantum schemes like Dilithium is crucial for secure deployments in the quantum era. Future work should focus on further optimizing masking techniques to reduce computational overhead, improving scalability for higher-order masking, and exploring additional countermeasures to strengthen security against side-channel attacks. By refining these implementations, we can ensure that post-quantum cryptographic schemes remain robust and practical for widespread adoption in resource-constrained environments.

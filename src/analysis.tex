@@ -19,7 +19,7 @@ The main aspects considered are:
 
 We base our analysis on key papers that have significantly contributed to side-channel resistant implementations of Dilithium.
 
-\section{Selected Implementations}
+\section{Related Work}
 
 \subsection{Masking Dilithium: Efficient Implementation and Side-Channel Evaluation}
 
@@ -82,32 +82,45 @@ Key strategies include:
 
 \subsection{Improved Gadgets for the High-Order Masking of Dilithium}
 
-Coron et al.\ \cite{Coron23} propose new masking gadgets to enhance the efficiency of high-order masking in Dilithium. They focus on reducing the complexity of critical operations and provide security proofs in the probing model.
+Coron et al.\ \cite{Coron23} introduce a set of novel masking gadgets designed to improve the efficiency of high-order masking in the Dilithium signature scheme. Their work addresses key challenges in masking complex operations inherent in lattice-based cryptography, particularly focusing on reducing the computational overhead associated with high-order masking while ensuring robust security guarantees.
 
 \subsubsection{Security Level}
 
-The gadgets are designed to be secure against high-order side-channel attacks, with proofs ensuring robustness in the $t$-probing model.
+The proposed gadgets are tailored to achieve security against high-order side-channel attacks. Coron et al.\ provide formal security proofs in the $t$-probing model, which is a standard framework for analyzing the security of masked implementations against side-channel attacks. In this model, an adversary can probe up to $t$ intermediate variables during the computation, and the implementation is considered secure if these probes do not reveal any sensitive information about the secret keys.
+
+Their gadgets are designed to be secure for any order $t$, with a particular focus on practical values of $t$ relevant for real-world applications. The formal proofs ensure that the masked operations do not introduce vulnerabilities that could be exploited by sophisticated attackers capable of higher-order attacks.
 
 \subsubsection{Performance Metrics}
 
-Significant performance improvements are reported for small masking orders:
+A significant contribution of their work is the introduction of the \textbf{ShiftMod} gadget, which efficiently performs arithmetic shifts modulo $2q$. This gadget reduces the complexity of such operations, which are frequently used in the polynomial arithmetic of Dilithium.
+
+Specifically, the ShiftMod gadget allows for:
 
 \begin{itemize}
-    \item \textbf{ShiftMod Gadget}: Reduces complexity of arithmetic shifts, improving efficiency.
-    \item \textbf{Boolean-to-Arithmetic Conversion}: Achieves lower operation counts for small $d$.
+    \item \textbf{Lower Computational Complexity}: By optimizing the arithmetic shift operations, they reduce the number of required operations, leading to faster execution times.
+    \item \textbf{Scalability for Small Orders}: The performance improvements are particularly notable for small masking orders (e.g., $d \leq 6$), where the overhead is significantly reduced compared to previous implementations.
 \end{itemize}
 
-However, complexity increases exponentially with the masking order $d$, limiting practicality for higher orders.
+Additionally, they improve the \textbf{Boolean-to-Arithmetic Conversion} process, which is essential in masked implementations where values may need to be converted between different masking domains. Their method achieves lower operation counts for small $d$, making the overall implementation more efficient.
+
+However, they acknowledge that the complexity of their approach increases exponentially with the masking order $d$. As a result, while the gadgets provide substantial performance benefits for lower orders, the practicality diminishes for higher orders due to the exponential growth in computational requirements.
 
 \subsubsection{Feasibility on Embedded Devices}
 
-For small masking orders, the implementations are feasible on embedded devices. The exponential complexity makes higher-order masking less practical on resource-constrained platforms.
+For small masking orders, their implementation is feasible on embedded devices, offering improved performance without compromising security. The efficiency gains from the ShiftMod gadget and optimized conversion algorithms make the masked Dilithium implementation suitable for resource-constrained environments when high-order masking is not required.
+
+However, due to the exponential increase in complexity with higher masking orders, the implementation becomes less practical for embedded devices when $d$ is large. The computational and memory requirements may exceed the capabilities of typical embedded platforms, limiting the applicability of their approach in scenarios where very high security levels are mandated.
 
 \subsubsection{Implementation Techniques}
 
-Innovations include:
+Coron et al.\ employ several innovative techniques to enhance the efficiency of the masked implementation:
 
 \begin{itemize}
-    \item \textbf{ShiftMod Gadget}: Efficient arithmetic shifts modulo $2q$.
-    \item \textbf{Optimized Masking of Decompose Function}: Methods providing efficiency gains for critical operations.
+    \item \textbf{ShiftMod Gadget}: This new gadget efficiently computes arithmetic shifts modulo $2q$ by leveraging properties of modular arithmetic and masking schemes. It reduces the number of required operations for shift computations, which are common in polynomial arithmetic and in functions like \texttt{Decompose}.
+    \item \textbf{Optimized Masking of \texttt{Decompose} Function}: They provide improved methods for masking the \texttt{Decompose} function, a critical component in Dilithium that splits polynomial coefficients into higher and lower bits. Their approach reduces the complexity of this operation, leading to better performance in the masked implementation.
+    \item \textbf{Efficient Conversion Algorithms}: The authors introduce optimized algorithms for converting between Boolean and arithmetic masking representations. These conversions are necessary in masked implementations to securely perform different types of operations, and their efficient algorithms reduce the overhead associated with these conversions.
+    \item \textbf{Security Proofs in the Probing Model}: By providing formal security proofs, they ensure that their masking techniques are sound and that the implementation is secure against attacks modeled in the $t$-probing framework. This adds confidence in the robustness of their approach.
 \end{itemize}
+
+Their work builds upon previous research in high-order masking but focuses on tailoring the gadgets specifically for the operations used in Dilithium. By addressing the unique challenges posed by lattice-based cryptography, they contribute valuable tools for enhancing the side-channel resistance of post-quantum cryptographic schemes.
+
