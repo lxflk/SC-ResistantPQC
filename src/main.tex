@@ -1,5 +1,3 @@
-% main.tex
-
 \documentclass[a4paper,12pt,oneside,openany,headsepline,bibliography=totocnumbered]{scrbook}
 
 % Import settings, packages, etc.
@@ -14,7 +12,8 @@
 \section*{Abstract}
 \thispagestyle{abstract}
 
-The imminent threat posed by quantum computing necessitates the transition to quantum-resistant cryptographic schemes like CRYSTALS-Dilithium, a leading lattice-based digital signature algorithm selected for standardization. Ensuring the feasibility and performance of side-channel resistant implementations of such schemes on embedded devices is a critical challenge. This paper introduces the most important aspects affecting the feasibility and performance of side-channel resistant implementations of post-quantum schemes, focusing on masking techniques, security levels (masking orders), performance metrics (execution time, cycle counts), implementation strategies, and the trade-offs between security and efficiency. We analyze, visualize, and compare all existing masked implementations of Dilithium regarding these aspects, providing a comprehensive discussion of their approaches. Our comparative study highlights how different implementations address the balance between security and performance, offering insights into optimal strategies for deploying secure and efficient post-quantum cryptography in resource-constrained environments. We emphasize the significance of refined sensitivity analyses, optimized masking gadgets, and the advantages of randomized signing in achieving practical side-channel resistance. Our findings serve as a guide for practitioners and researchers aiming to enhance the side-channel resistance of post-quantum cryptographic implementations without compromising practicality.
+The impending advent of quantum computers poses a significant threat to current asymmetric cryptographic schemes, necessitating the development and standardization of quantum-resistant algorithms. However, the practical implementation of these post-quantum cryptographic (PQC) schemes on embedded devices introduces new challenges, particularly regarding resistance to \acp{SCA}. This paper focuses on the feasibility and performance of side-channel resistant implementations of PQC schemes, with a particular emphasis on the lattice-based signature scheme CRYSTALS-Dilithium. We introduce the most critical aspects affecting the feasibility and performance of side-channel resistant implementations, including inherent side-channel vulnerabilities and the effectiveness of various countermeasures such as masking and shuffling techniques. We then visualize, compare, and discuss existing implementations concerning these aspects, analyzing their security and efficiency on embedded devices. Our comparative analysis reveals that while higher-order masking provides robust security against side-channel attacks, it often incurs substantial performance overheads, making it less suitable for resource-constrained environments. Conversely, techniques like shuffling offer a more balanced trade-off between security and performance. Our findings highlight the importance of selecting appropriate countermeasures based on specific application requirements and provide valuable insights for practitioners aiming to deploy secure and efficient PQC implementations in embedded systems.
+
 
 
 % Table of contents
@@ -25,19 +24,21 @@ The imminent threat posed by quantum computing necessitates the transition to qu
 \thispagestyle{acronyms}
 \addcontentsline{toc}{chapter}{Acronyms}
 \begin{acronym}[PQC]
-    \acro{ARM}{Advanced RISC Machine}
-    \acro{B2A}{Boolean-to-Arithmetic}
     \acro{DPA}{Differential Power Analysis}
     \acro{ECC}{Elliptic Curve Cryptography}
-    \acro{MLWE}{Module Learning withs Errors}
+    \acro{FFT}{Fast Fourier Transform}
+    \acro{MLWE}{Module Learning with Errors}
+    \acro{MSIS}{Module Short Integer Solution}
     \acro{NIST}{National Institute of Standards and Technology}
     \acro{NTT}{Number Theoretic Transform}
-    \acro{PINI}{Probe-Isolating Non-Interference}
     \acro{PQC}{Post-Quantum Cryptography}
     \acro{SCA}{Side-Channel Attack}
-    \acro{SPA}{Simple Power Analysis}
+    \acro{MO}{Masking Order}
+    \acro{CFS}{Coarse-Full Shuffle}
+    \acro{CIGS}{Coarse-In-Group-Shuffle}
+    \acro{BFS}{Basic-Fine-Shuffle}
+    \acro{BWS}{Bitwise-Shuffle}
 \end{acronym}
-
 
 % Include all chapters as .tex files
 \input{introduction}
@@ -46,13 +47,13 @@ The imminent threat posed by quantum computing necessitates the transition to qu
 \input{comparative_analysis}
 \input{conclusion}
 
-% List of figures and tables
 \newpage
-\listoffigures
-\thispagestyle{listsoffigures}
+\noindent\parbox{\textwidth}{
+    \listoftables
+    \vspace{1cm} % Adjust spacing
+    \listoffigures
+}
 
-\listoftables
-\thispagestyle{listoftables}
 
 % Bibliography
 \newpage

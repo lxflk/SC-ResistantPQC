@@ -1,207 +1,249 @@
-% comparative_analysis.tex
-
 \chapter{Comparative Analysis}
 \thispagestyle{chapterstart}
 
-In this chapter, we perform a comparative analysis of the side-channel resistant implementations of CRYSTALS-Dilithium presented in the selected papers. We focus on the key aspects that impact the feasibility and performance of these implementations on embedded devices, namely the security levels achieved, performance metrics, scalability with masking order, feasibility on embedded devices, implementation techniques and optimizations, and the trade-offs between security and performance.
+In this chapter, we compare various side-channel resistant implementations of the Dilithium signature scheme, focusing on their feasibility and performance on embedded devices. We analyze how different countermeasures, particularly masking and shuffling techniques, impact security and efficiency. Our aim is to assess these implementations through their experimental results, as represented in the provided figures and tables, and discuss their practicality for real-world deployment.
 
-\section{Comparison of Security Levels}
+\section{Assessment of the Attack Surface}
 
-Security against side-channel attacks is often quantified by the masking order $d$, where higher orders provide increased protection. Table~\ref{tab:security_levels} summarizes the security levels achieved by each implementation.
+Understanding the attack surface of Dilithium implementations is crucial for identifying potential vulnerabilities to side-channel attacks. Table~\ref{tab:attack_surface} summarizes key findings from studies that evaluated the susceptibility of unprotected Dilithium implementations to such attacks.
 
-\begin{table}[h]
+\begin{table}[ht]
     \centering
     \renewcommand{\arraystretch}{1.2}
-    \caption{Security Levels of Implementations}
-    \begin{tabular}{l | c | p{7cm}}
-        \toprule
-        \textbf{Implementation}           & \textbf{Masking Order $d$} & \textbf{Targeted Security Level}                             \\
-        \midrule
-        Migliore et al.~\cite{Migliore19} & $d=1$ to $d=3$             & Protection against first to third-order side-channel attacks \\
-        Azouaoui et al.~\cite{Azouaoui22} & $d=2$ to $d=8$             & Higher-order side-channel resistance up to eighth-order      \\
-        Coron et al.~\cite{Coron23}       & $d=1$ to $d=12$            & High-order masking with proofs up to twelfth-order           \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:security_levels}
+    \caption{Assessment of the Attack Surface in Dilithium Implementations}
+    \label{tab:attack_surface}
+    \begin{tabularx}{\textwidth}{|X|X|X|}
+        \hline
+        \textbf{Approach}                                             & \textbf{Evaluation Methodology}                        & \textbf{Findings}                                 \\ \hline
+        Profiling attack on bit-unpacking function \cite{Marzougui22} & Machine learning profiling, integer linear programming & Full recovery of $s_1$ from 756,589 signatures    \\ \hline
+        Side-channel attack on NTT \cite{Pessl19}                     & Single-trace analysis, factor graph modeling           & Secret key recovery from single power trace       \\ \hline
+        Leakage assessment of unprotected version \cite{Migliore19}   & Welch's $t$-tests (500 traces), single-bit DPA         & Significant leakage observed with only 500 traces \\ \hline
+    \end{tabularx}
 \end{table}
 
-Migliore et al.\ focus on first to third-order masking to protect against basic side-channel attacks. Azouaoui et al.\ extend the protection to higher orders, up to $d=8$, offering robust resistance against more sophisticated attacks. Coron et al.\ provide high-order masking with security proofs up to $d=12$.
+Marzougui et al.~\cite{Marzougui22} performed a profiling side-channel attack on the bit-unpacking function using machine learning techniques and integer linear programming. By analyzing power traces from 756,589 signatures, they successfully recovered the secret key component $s_1$, highlighting the vulnerability of unprotected implementations.
 
-\section{Performance Metrics Comparison}
+Pessl et al.~\cite{Pessl19} demonstrated a single-trace side-channel attack on the NTT, using factor graph modeling and belief propagation to recover secret keys from a single power trace, exploiting the deterministic patterns in NTT computations.
 
-Performance is critical for the practicality of masked implementations on embedded devices. Table~\ref{tab:performance_metrics} compares the performance metrics reported by each implementation.
+Similarly, Migliore et al.~\cite{Migliore19} conducted leakage assessments using Welch's $t$-tests and single-bit \ac{DPA} on 500 traces, detecting significant leakage of sensitive information.
 
-\begin{table}[h]
+These studies demonstrate that unprotected Dilithium implementations are susceptible to side-channel attacks, necessitating effective countermeasures.
+
+
+\section{Evaluation of Side-Channel Countermeasures}
+
+To mitigate side-channel vulnerabilities, various countermeasures have been proposed and evaluated. Table~\ref{tab:countermeasures} presents a summary of these methods, their evaluation methodologies, and findings regarding their effectiveness.
+
+\begin{table}[ht]
     \centering
     \renewcommand{\arraystretch}{1.2}
-    \caption{Performance Metrics of Implementations}
-    \begin{tabular}{l | c | c}
-        \toprule
-        \textbf{Implementation}           & \textbf{Masking Order $d$} & \textbf{Execution Time Overhead or Cycle Counts} \\
-        \midrule
-        Migliore et al.~\cite{Migliore19} & $d=1$                      & Approximately $5.6\times$ slower than unmasked   \\
-                                          & $d=2$                      & Approximately $11.6\times$ slower than unmasked  \\
-                                          & $d=3$                      & Approximately $28\times$ slower than unmasked    \\
-        \midrule
-        Azouaoui et al.~\cite{Azouaoui22} & $d=2$                      & 13,891 kCycles (randomized signing)              \\
-                                          & $d=4$                      & 39,064 kCycles (randomized signing)              \\
-                                          & $d=6$                      & 73,905 kCycles (randomized signing)              \\
-                                          & $d=8$                      & 111,515 kCycles (randomized signing)             \\
-        \midrule
-        Coron et al.~\cite{Coron23}       & $d=2$                      & 38,069 kCycles (Dilithium Level 5)               \\
-                                          & $d=4$                      & 87,809 kCycles (Dilithium Level 5)               \\
-                                          & $d=6$                      & 137,034 kCycles (Dilithium Level 5)              \\
-                                          & $d=8$                      & 201,583 kCycles (Dilithium Level 5)              \\
-                                          & $d=10$                     & 315,249 kCycles (Dilithium Level 5)              \\
-                                          & $d=12$                     & 440,769 kCycles (Dilithium Level 5)              \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:performance_metrics}
+    \caption{Evaluation of Side-Channel Countermeasures for Dilithium}
+    \label{tab:countermeasures}
+    \begin{tabularx}{\textwidth}{|X|X|X|X|}
+        \hline
+        \textbf{Countermeasure}                 & \textbf{Evaluation Methodology}              & \textbf{Security Framework}                  & \textbf{Findings}                                                     \\ \hline
+        High-order masking \cite{Migliore19}    & Welch's t-tests, single-bit DPA              & \(t\)-probed security, gadget-level security & No detectable leakage; 10,000 traces analyzed                         \\ \hline
+        Randomized masking \cite{Azouaoui22}    & Sensitivity analysis                         & Improved sensitivity analysis                & Enhanced leakage protection; prevents trace averaging                 \\ \hline
+        Improved masking gadgets \cite{Coron23} & Simulation, proofs, C implementation results & \(t\)-probed, \(t\)-NI, \(t\)-SNI security   & Secure gadgets; improved resistance with ShiftMod gadget              \\ \hline
+        Shuffling countermeasures \cite{Ravi20} & Practical evaluation on ARM Cortex-M4        & Randomization entropy metrics                & Reduced traceability; effectiveness varies with shuffling granularity \\ \hline
+    \end{tabularx}
 \end{table}
 
-Migliore et al.\ report execution time overheads relative to the unmasked implementation, showing that higher masking orders result in significant performance penalties. Azouaoui et al.\ provide cycle counts for the masked signing operation at different masking orders, demonstrating reasonable performance even at higher orders due to their optimized techniques and the use of randomized signing. Coron et al.\ present cycle counts for their full implementation at various security levels, showing that the performance overhead increases with the masking order.
+Migliore et al.~\cite{Migliore19} implemented high-order masking techniques and evaluated their effectiveness using statistical tests on 10,000 traces. Their findings showed no detectable leakage, confirming the robustness of their countermeasures under the \(t\)-probed security model. Azouaoui et al.~\cite{Azouaoui22} introduced randomized masking schemes based on refined sensitivity analysis, leading to improved protection against side-channel attacks by preventing trace averaging. Coron et al.~\cite{Coron23} proposed new masking gadgets, such as the ShiftMod gadget, and validated their security through simulations and formal proofs, demonstrating enhanced resistance under the \(t\)-SNI security model. Ravi et al.~\cite{Ravi20} explored shuffling techniques and evaluated their effectiveness on an ARM Cortex-M4 microcontroller. Their results indicated reduced traceability, with the level of security improvement depending on the shuffling method used.
 
-\section{Scalability with Masking Order}
+\section{Key Generation Performance}
 
-Scalability is an important consideration when increasing the masking order to achieve higher security levels. Figure~\ref{fig:scalability} illustrates the execution time (in kCycles) of the masked signing operation at different masking orders for each implementation.
+The implementation of side-channel countermeasures can impact the performance of the key generation phase in Dilithium. Figure~\ref{fig:keygen_performance} compares the normalized execution times of different implementations, focusing on masking and shuffling techniques.
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}
         \begin{axis}[
-                xlabel={Masking Order $d$},
-                ylabel={Execution Time (kCycles)},
-                xmin=1, xmax=12,
-                ymin=0, ymax=500000,
-                xtick={1,2,3,4,5,6,7,8,9,10,11,12},
-                ytick={0,100000,200000,300000,400000,500000},
-                legend pos=north west,
-                ymajorgrids=true,
-                grid style=dashed,
+                ybar,
+                bar width=10pt,
                 width=\textwidth,
-                height=8cm,
+                height=10cm,
+                legend style={at={(0.5,1.05)},
+                        anchor=south,legend columns=-1},
+                symbolic x coords={
+                        Unprot.,
+                        MO-1,
+                        MO-2,
+                        MO-3,
+                        CFS,
+                        CIGS,
+                        BFS,
+                        BWS
+                    },
+                xtick=data,
+                ylabel={Normalized Execution Time (× Unprotected)},
+                xlabel={Implementation Type},
+                ymin=0,
+                ymax=15,
+                enlarge x limits=0.05,
+                x tick label style={font=\normalsize},
+                y tick label style={/pgf/number format/fixed},
             ]
-
-            % Migliore et al.
-            \addplot[
-                color=blue,
-                mark=square,
-            ]
-            coordinates {
-                    (1, 5.64*1000)
-                    (2, 11.68*1000)
-                    (3, 28.08*1000)
+            \addplot[blue,fill=blue] coordinates {
+                    (Unprot.,1)
+                    (MO-1,5.66)
+                    (MO-2,7.8)
+                    (MO-3,13.4)
+                    (CFS,0)
+                    (CIGS,0)
+                    (BFS,0)
+                    (BWS,0)
                 };
-            \addlegendentry{Migliore et al.~\cite{Migliore19}}
 
-            % Azouaoui et al.
-            \addplot[
-                color=red,
-                mark=triangle,
-            ]
-            coordinates {
-                    (2, 13891.4)
-                    (4, 39064.5)
-                    (6, 73905.4)
-                    (8, 111515.4)
+            \addplot[red,fill=red] coordinates {
+                    (Unprot.,1)
+                    (MO-1,0)
+                    (MO-2,0)
+                    (MO-3,0)
+                    (CFS,1.221)
+                    (CIGS,1.203)
+                    (BFS,1.181)
+                    (BWS,2.971)
                 };
-            \addlegendentry{Azouaoui et al.~\cite{Azouaoui22}}
 
-            % Coron et al.
-            \addplot[
-                color=green,
-                mark=*,
-            ]
-            coordinates {
-                    (2, 38069)
-                    (4, 87809)
-                    (6, 137034)
-                    (8, 201583)
-                    (10, 315249)
-                    (12, 440769)
-                };
-            \addlegendentry{Coron et al.~\cite{Coron23}}
-
+            \legend{Migliore et al., Ravi et al.}
         \end{axis}
     \end{tikzpicture}
-    \caption{Execution Time of Masked Signing Operation at Different Masking Orders}
-    \label{fig:scalability}
+    \caption{Normalized execution time of Dilithium KeyGen for different implementations.}
+    \label{fig:keygen_performance}
 \end{figure}
-\newpage
 
-Migliore et al.'s approach is practical for lower masking orders but may become less feasible at higher orders, especially due to the non-standard modulus. In contrast, Azouaoui et al.'s implementation demonstrates better scalability, with execution times increasing moderately due to their optimized gadgets and use of randomized signing. Coron et al.'s implementation supports masking orders up to $d=12$, but with significant performance overhead at higher orders.
+Migliore et al.~\cite{Migliore19} implemented \acp{MO} from 1 to 3. Their results show that higher masking orders significantly increase execution time due to the overhead of processing multiple shares securely. For example, MO-1 incurs approximately 5.66 times the execution time of the unprotected version, while MO-3 increases this to 13.4 times.
 
-\section{Feasibility on Embedded Devices}
+Ravi et al.~\cite{Ravi20} evaluated shuffling techniques, including \ac{CFS}, \ac{CIGS}, \ac{BFS}, and \ac{BWS}. Their implementations exhibit a moderate performance overhead, with execution times ranging from 1.18 to 1.22 times the unprotected version for \ac{CFS}, \ac{CIGS}, and \ac{BFS}. The \ac{BWS} implementation has a higher overhead of approximately 2.97 times, due to the increased computational complexity of bitwise shuffling.
 
-Feasibility on embedded devices depends on achieving acceptable performance within the limited computational resources available. Table~\ref{tab:feasibility} summarizes the feasibility considerations for each implementation.
+The data was collected through benchmarking on ARM Cortex-M4 microcontrollers, representing common embedded platforms. Execution times were measured under controlled conditions to ensure reliable comparisons.
 
-\begin{table}[h]
+\section{Signing Performance}
+
+The signing operation is another critical aspect affected by side-channel countermeasures. Figure~\ref{fig:combined_performance_updated} illustrates the normalized execution times for various implementations, focusing on masking and shuffling techniques.
+
+\begin{figure}[ht]
     \centering
-    \renewcommand{\arraystretch}{1.2}
-    \caption{Feasibility of Implementations on Embedded Devices}
-    \begin{tabular}{l | p{10cm}}
-        \toprule
-        \textbf{Implementation}           & \textbf{Feasibility Considerations}                                                                                                                                                                                                                                                      \\
-        \midrule
-        Migliore et al.~\cite{Migliore19} & Feasible for first-order masking on embedded devices due to moderate overhead. The use of a power-of-two modulus simplifies computations and improves performance. Higher masking orders (beyond $d=3$) may be less practical due to increased overhead and modifications to the scheme. \\
-        \midrule
-        Azouaoui et al.~\cite{Azouaoui22} & Feasible for higher-order masking up to $d=8$ on devices like ARM Cortex-M4. Optimizations and the use of randomized signing reduce the overhead, making it practical for embedded devices even at higher security levels.                                                               \\
-        \midrule
-        Coron et al.~\cite{Coron23}       & Feasible at lower masking orders, but high execution times at higher orders may exceed the capabilities of typical embedded devices, limiting practicality. The implementation's complexity increases with $d$, affecting scalability on resource-constrained platforms.                 \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:feasibility}
-\end{table}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                    width=\textwidth,
+                    height=6cm,
+                    xlabel={Masking Order},
+                    ylabel={Normalized Exec. Time},
+                    xmin=0, xmax=4,
+                    ymin=0, ymax=220,
+                    xtick={0,1,2,3,4},
+                    ytick={0,50,100,150,200},
+                    legend pos=north west,
+                    grid=both,
+                    grid style={line width=.1pt, draw=gray!10},
+                    major grid style={line width=.2pt,draw=gray!50},
+                ]
+                % Migliore data
+                \addplot[color=blue,mark=o] coordinates {
+                        (0,1)
+                        (1,5.68)
+                        (2,11.77)
+                        (3,28.3)
+                    };
+                \addlegendentry{Migliore et al.}
 
-Azouaoui et al.'s implementation is particularly suitable for embedded devices even at higher masking orders due to their efficient masking techniques and optimizations. Migliore et al.'s approach is practical for lower masking orders but may become less feasible at higher orders and due to the non-standard modulus. Coron et al.'s implementation may be challenging to deploy on embedded devices at higher masking orders due to increased complexity and resource demands.
+                % Azouaoui Deterministic data
+                \addplot[color=red,mark=square*] coordinates {
+                        (0,1)
+                        (1,7.32)
+                        (2,21.27)
+                        (3,33.6)
+                        (4,52.5)
+                    };
+                \addlegendentry{Azouaoui Det.}
 
-\section{Implementation Techniques and Optimizations}
+                % Azouaoui Randomized data
+                \addplot[color=purple,mark=triangle*] coordinates {
+                        (0,1)
+                        (1,2.15)
+                        (2,4.3)
+                        (3,12.11)
+                        (4,20)
+                    };
+                \addlegendentry{Azouaoui Rand.}
 
-The specific techniques and optimizations employed significantly impact the security and performance of the implementations. Table~\ref{tab:implementation_techniques} highlights the key techniques used by each implementation.
+                % Coron data
+                \addplot[color=green,mark=*] coordinates {
+                        (0,1)
+                        (1,43)
+                        (2,98)
+                        (3,153)
+                        (4,208)
+                    };
+                \addlegendentry{Coron et al.}
 
-\begin{table}[h]
-    \centering
-    \renewcommand{\arraystretch}{1.2}
-    \caption{Implementation Techniques and Optimizations}
-    \begin{tabular}{l | p{11cm}}
-        \toprule
-        \textbf{Implementation}           & \textbf{Techniques and Optimizations}                                                                                                                                                                                                                                                                                                                                              \\
-        \midrule
-        Migliore et al.~\cite{Migliore19} & Use of power-of-two modulus to simplify masking, specialized algorithms for masking polynomial arithmetic, focus on minimizing non-linear operations. The power-of-two modulus allows for efficient masking of decomposition functions and reduces complexity of arithmetic-to-Boolean conversions.                                                                                \\
-        \midrule
-        Azouaoui et al.~\cite{Azouaoui22} & Refined sensitivity analysis correcting previous flaws, development of new masking gadgets tailored for Dilithium, use of Probe-Isolating Non-Interference (PINI) compliant gadgets, exploitation of randomized signing to reduce overhead by avoiding costly masked deterministic functions like Keccak. Optimizations in sampling and arithmetic operations enhance performance. \\
-        \midrule
-        Coron et al.~\cite{Coron23}       & Introduction of new efficient masking gadgets (e.g., ShiftMod gadget), optimized algorithms for high-order masking, security proofs in the probing model, focus on arithmetic modulo operations. Their gadgets reduce the complexity of critical operations at small masking orders but have exponential complexity growth with $d$.                                               \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:implementation_techniques}
-\end{table}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Masking Implementations}
+        \label{fig:masking_performance_line}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                    ybar=0pt,
+                    bar width=10pt,
+                    width=\textwidth,
+                    height=6cm,
+                    legend style={
+                            at={(0.5,0.95)},
+                            anchor=north,
+                            draw=black,
+                            font=\small
+                        },
+                    symbolic x coords={
+                            {Coarse\\Full},
+                            {Coarse\\In-Group},
+                            {Basic\\Fine},
+                            {Bitwise\\Fine}
+                        },
+                    xtick=data,
+                    ylabel={Normalized Exec. Time},
+                    ymin=0,
+                    ymax=6,
+                    enlarge x limits=0.10,
+                    x tick label style={font=\normalsize, align=center},
+                    y tick label style={/pgf/number format/fixed},
+                ]
+                \addplot[yellow,fill=yellow] coordinates {
+                        ({Coarse\\Full},1.359)
+                        ({Coarse\\In-Group},1.338)
+                        ({Basic\\Fine},1.377)
+                        ({Bitwise\\Fine},5.06)
+                    };
 
-Azouaoui et al.\ introduce several optimizations, including refined sensitivity analysis and new masking gadgets, which enhance both security and performance. The use of randomized signing avoids the need to mask complex deterministic functions, further reducing overhead. Migliore et al.\ optimize their implementation by simplifying the modulus to a power-of-two, which significantly eases the masking of decomposition operations and reduces the number of non-linear operations. Coron et al.\ focus on creating efficient gadgets for high-order masking and provide strong security proofs, but the complexity increases with the masking order.
-\newpage
+                \legend{Ravi et al.}
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Shuffling Implementations}
+        \label{fig:shuffle_performance}
+    \end{subfigure}
+    \caption{Normalized execution time of Dilithium Signing for masking and shuffling implementations.}
+    \label{fig:combined_performance_updated}
+\end{figure}
 
-\section{Trade-offs Between Security and Performance}
+In Figure~\ref{fig:masking_performance_line}, the execution times of masking implementations are plotted against the masking order. Migliore et al.~\cite{Migliore19} observed that higher masking orders significantly increase execution time, with MO-1 at approximately 5.68 times the unprotected version and MO-3 reaching 28.3 times. Azouaoui et al.~\cite{Azouaoui22} showed that their randomized masking scheme achieves better performance, with MO-2 at 4.3 times the unprotected execution time, due to more efficient handling of randomness and optimized masking gadgets. Coron et al.~\cite{Coron23} reported even higher overheads, particularly at higher masking orders, reflecting the complexity of their high-order masking gadgets.
 
-Implementing higher-order masking increases security but also introduces significant performance overhead. Each implementation addresses this trade-off differently:
+Figure~\ref{fig:shuffle_performance} shows the performance impact of shuffling techniques from Ravi et al.~\cite{Ravi20}. The Coarse-Full, Coarse In-Group, and Basic Fine shuffles exhibit moderate overheads (approximately 1.34 times the unprotected version), while the Bitwise Fine shuffle incurs a higher overhead of about 5.06 times, due to the finer granularity of shuffling and increased computational demands.
 
-\begin{itemize}
-    \item \textbf{Migliore et al.~\cite{Migliore19}} prioritize performance at lower masking orders by simplifying the modulus to a power-of-two, which may affect compliance with standard parameters and security proofs. While efficient at first-order masking, higher orders result in substantial overhead, and the non-standard modulus may pose challenges for interoperability and security assurance.
-    \item \textbf{Azouaoui et al.~\cite{Azouaoui22}} aim for a balance between high security and reasonable performance by introducing optimized gadgets and using randomized signing, making higher-order masking practical. Their approach maintains compliance with standard parameters and avoids modifications to the scheme.
-    \item \textbf{Coron et al.~\cite{Coron23}} focus on providing strong security proofs for high-order masking, accepting higher performance overheads as a trade-off for increased security. The exponential complexity with higher $d$ values limits scalability on embedded devices but may be acceptable in contexts where strong security guarantees are required.
-\end{itemize}
+The execution times were obtained through practical implementations on relevant hardware platforms, such as embedded devices and laptops, ensuring that the performance measurements accurately reflect real-world scenarios and provide a reliable basis for comparative analysis.
 
-\section{Synthesis, Discussion, and Conclusion}
+\section{Discussion}
 
-Our comparative analysis shows that Azouaoui et al.'s implementation offers the most practical balance between security and performance for embedded devices, supporting higher-order masking up to $d=8$ with reasonable execution times. Their optimizations and use of randomized signing make higher-order masking feasible in resource-constrained environments.
+The comparative analysis demonstrates that implementing side-channel countermeasures in Dilithium involves trade-offs between security and performance. High-order masking provides strong security guarantees but at the cost of significant execution time increases, which may not be practical for resource-constrained embedded devices. Randomized masking schemes offer a better balance, improving security while mitigating some performance penalties.
 
-Migliore et al.'s implementation is suitable for applications where lower-order masking suffices and modifications to the modulus are acceptable. They achieve good performance improvements through modulus simplification, but the use of a power-of-two modulus deviates from standard parameters, which may raise compatibility and security concerns.
+Shuffling techniques introduce randomness in operation sequences, reducing the predictability exploited in side-channel attacks. They generally incur lower performance overheads compared to high-order masking but may offer less robust security, depending on the attack model and the granularity of shuffling.
 
-Coron et al.'s implementation provides strong security assurances through high-order masking and formal proofs, but the associated performance overhead may limit its practicality on embedded devices. It is more suited for scenarios where security is paramount and resources are less constrained.
+Practitioners must consider the specific security requirements and performance constraints of their applications when choosing countermeasures. For high-security environments where leakage resilience is critical, higher-order masking may be justified despite the overhead. In contrast, applications with stringent performance needs may prefer shuffling or lower-order masking combined with other lightweight countermeasures.
 
-In conclusion, the choice of implementation depends on the specific security requirements and resource constraints of the target application. For embedded devices requiring high levels of side-channel resistance without altering the standard scheme, Azouaoui et al.'s approach is recommended due to its optimized balance of security and performance. Migliore et al.'s implementation can be considered when performance is critical and lower-order masking is sufficient, keeping in mind the potential issues with non-standard parameters.
-
-% References (ensure the references are correctly cited in your bibliography)
-% \bibliographystyle{plain}
-% \bibliography{bibliography}
-
-% End of comparative_analysis.tex
+Regular assessment of implementations against emerging side-channel attacks is essential to maintain security. The evolution of attack techniques necessitates continuous evaluation and adaptation of countermeasures to ensure that Dilithium implementations remain both secure and efficient on embedded platforms.

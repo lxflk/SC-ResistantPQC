@@ -30,6 +30,9 @@
 \usepackage{array}
 \usepackage{multirow}
 
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+
 \makeatletter
 \patchcmd{\chapter}{plain}{fancyplain}{}{}
 \makeatother

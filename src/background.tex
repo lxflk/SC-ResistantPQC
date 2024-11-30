@@ -1,58 +1,40 @@
-% background.tex
-
 \chapter{Background}
 \thispagestyle{chapterstart}
 
-\section{Post-Quantum Cryptography and CRYSTALS-Dilithium}
+\section{CRYSTALS-Dilithium Digital Signature Scheme}
 
-The emergence of practical quantum computers threatens the security of classical cryptographic systems. Quantum algorithms like Shor's algorithm can efficiently solve problems such as integer factorization and discrete logarithms, which underpin traditional public-key cryptosystems. To mitigate this risk, cryptographic schemes that are resistant to quantum attacks are being developed and standardized.
+CRYSTALS-Dilithium is a lattice-based digital signature scheme that has emerged as a leading candidate in the \ac{NIST} Post-Quantum Cryptography standardization process. It is constructed on the hardness assumptions of the \acp{MLWE} and \acp{MSIS} problems, which are believed to be resistant to attacks even by quantum computers.
 
-Among the leading candidates in the NIST post-quantum cryptography standardization process is CRYSTALS-Dilithium, a lattice-based digital signature scheme. Dilithium is based on the hardness of the Module Learning with Errors (\ac{MLWE}) problem, involving solving systems of noisy linear equations over polynomial rings. It operates over the ring $\mathbb{Z}_q[X]/(X^n + 1)$, where $q$ is a prime modulus and $n$ is a power of two, leveraging structured lattices for efficient key generation, signing, and verification.
+Dilithium operates over structured lattices and employs efficient polynomial arithmetic in the ring $\mathbb{Z}_q[X]/(X^n + 1)$, where $q$ is a prime modulus and $n$ is a power of two. Key operations in Dilithium include polynomial multiplication and addition modulo $(X^n + 1)$ and $q$, sampling of random polynomials with coefficients from specific distributions, and decomposition functions used in signature generation and verification.
 
-Key operations in Dilithium include polynomial arithmetic, sampling of random polynomials, and decomposition functions that split polynomial coefficients. These operations are often implemented efficiently using Number Theoretic Transforms (\acp{NTT}), which are crucial for the scheme's performance.
+To achieve high performance, Dilithium implementations often utilize the \acp{NTT}, a specialized version of the \acp{FFT} adapted for finite fields. The NTT allows efficient polynomial multiplication by transforming polynomials into the frequency domain, where convolution becomes point-wise multiplication, significantly reducing computational complexity.
 
-While Dilithium is designed to be secure against quantum attacks, implementations can be vulnerable to side-channel attacks if not properly protected, especially during operations involving secret keys and sensitive intermediate values.
+\section{Side-Channel Attacks on Cryptographic Implementations}
 
-\section{Side-Channel Attacks and Vulnerabilities}
+Side-channel attacks exploit unintentional information leakage from physical implementations of cryptographic algorithms to recover sensitive information such as secret keys. These leakages can stem from variations in power consumption, electromagnetic emissions, timing information, or other physical phenomena correlated with the processed data or executed operations.
 
-\acp{SCA} exploit physical leakages from cryptographic implementations to extract sensitive information. Unlike traditional cryptanalysis, which targets the mathematical structure of algorithms, SCAs leverage information such as timing variations, power consumption, and electromagnetic emissions produced during cryptographic operations.
+Embedded devices are particularly susceptible to side-channel attacks due to their physical accessibility and resource constraints, which may limit the implementation of countermeasures. Ensuring that cryptographic implementations, especially those intended for deployment on embedded platforms, are resistant to side-channel attacks is essential for maintaining security in practical applications.
 
-Common types of side-channel attacks include:
+\section{Masking as a Side-Channel Countermeasure}
 
-\begin{itemize}
-    \item \textbf{Timing Attacks}: Analyzing execution time variations to infer secret data.
-    \item \textbf{Power Analysis Attacks}: Measuring power consumption during computation; includes \ac{SPA} and \ac{DPA}.
-    \item \textbf{Electromagnetic Attacks}: Capturing electromagnetic emissions to recover secret information.
-\end{itemize}
+Masking is a widely used countermeasure against side-channel attacks that involves representing sensitive variables as a combination of random shares. The fundamental idea is to split a secret value into multiple shares such that each share individually provides no information about the secret. For example, in Boolean masking, a secret value $x$ is split into $t+1$ shares $(x_0, x_1, \dots, x_t)$ satisfying $x = x_0 \oplus x_1 \oplus \dots \oplus x_t$.
 
-In the context of Dilithium, vulnerabilities may arise during key generation, signing processes, and functions like decomposition and rejection sampling. Operations involving secret keys and polynomials can leak information if not properly protected. Embedded devices are particularly susceptible due to their limited computational resources and physical accessibility, making it challenging to implement robust countermeasures.
+By processing each share separately and ensuring that any side-channel leakage is independent of the actual secret value, masking can significantly reduce the effectiveness of side-channel attacks. Masking schemes are analyzed under various security models, such as the $t$-probing model, which formalizes the adversary's capabilities and the required level of protection.
 
-\section{Masking Techniques as Countermeasures}
+Implementing masking in practice, especially on embedded devices, requires careful consideration of performance overheads and the complexity of securely handling operations involving masked values, particularly non-linear functions.
 
-Masking is a widely used countermeasure against SCAs. It involves splitting sensitive variables into multiple shares so that no single share reveals information about the secret. Computations are performed on these shares independently, reducing the correlation between physical leakages and sensitive data.
+\section{Shuffling as a Side-Channel Countermeasure}
 
-There are primarily two types of masking:
+Shuffling is another countermeasure against side-channel attacks, which aims to randomize the order of operations or the processing of data elements to prevent attackers from correlating side-channel observations with specific computations. By introducing randomness into the execution flow, shuffling disrupts the deterministic patterns that side-channel attacks often exploit.
 
-\begin{itemize}
-    \item \textbf{Boolean Masking}: Uses bitwise XOR operations to mask sensitive values; suitable for algorithms involving logical operations.
-    \item \textbf{Arithmetic Masking}: Uses modular addition to mask sensitive values; suitable for algorithms involving arithmetic operations in rings or fields.
-\end{itemize}
+In the context of cryptographic algorithms like Dilithium, shuffling can be applied to operations such as the processing of polynomial coefficients or the execution order of arithmetic computations. For instance, the order in which the butterfly operations in the Number Theoretic Transform (NTT) are performed can be randomized.
 
-Higher-order masking extends this concept by splitting sensitive variables into $d$ shares, providing protection against adversaries capable of observing up to $d - 1$ leakages simultaneously. While higher-order masking increases security, it introduces significant computational overhead and complexity, especially for non-linear operations where secure recombination of shares is required.
-
-Implementing masking in schemes like Dilithium involves challenges due to the need to securely perform polynomial arithmetic on masked values. Linear operations, such as addition and subtraction, can be performed share-wise without additional complexity. However, non-linear operations, such as multiplication and modular reduction, require specialized algorithms, often referred to as \emph{masking gadgets}, to securely handle interactions between shares.
-
-\section{Challenges in Masking Dilithium}
-
-Masking Dilithium presents several challenges:
+Shuffling techniques include:
 
 \begin{itemize}
-    \item \textbf{Efficiency}: High-order masking increases computational overhead, impacting performance. Optimizing masking techniques is essential to maintain acceptable execution times, especially on embedded devices.
-    \item \textbf{Complex Operations}: Functions like the \texttt{Decompose} function and conditional branching based on secret data are complex to mask securely. These operations are critical in Dilithium and require careful treatment to prevent leakages.
-    \item \textbf{Resource Constraints}: Embedded devices have limited computational resources and memory. Implementations must be efficient in both time and space to be practical in such environments.
-    \item \textbf{Security Guarantees}: Providing formal security guarantees requires rigorous proofs in appropriate models, such as the $t$-probing model. Ensuring that masking schemes are secure under these models adds to the implementation complexity.
+    \item \textbf{Coarse Shuffling}: Randomizing the order of larger blocks of operations, which provides moderate security improvements with relatively low performance overhead.
+    \item \textbf{Fine Shuffling}: Randomizing the order of individual operations or data elements, offering higher security at the cost of increased computational complexity.
 \end{itemize}
 
-An additional consideration in Dilithium is the choice between deterministic and randomized signing modes. Deterministic signing derives the secret nonce from the message and secret key, simplifying verification but potentially increasing vulnerability to side-channel attacks if not properly masked. Randomized signing generates a fresh random nonce for each signature, improving side-channel resistance by adding unpredictability but requiring secure random number generation. Randomized signing can reduce the need for masking complex deterministic computations, leading to performance benefits in masked implementations.
+Implementing shuffling effectively requires generating high-quality randomness and carefully managing the additional computational overhead to maintain acceptable performance on embedded devices. While shuffling alone may not provide as strong protection as higher-order masking, it can be an effective component of a composite countermeasure strategy, particularly when combined with other techniques.
 
-Overall, achieving side-channel resistance in Dilithium implementations requires a careful balance between security and performance. Optimizing masking techniques, focusing on critical components, and considering the specific constraints of the target platform are essential for practical and secure deployments.

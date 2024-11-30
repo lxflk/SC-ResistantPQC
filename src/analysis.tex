@@ -1,126 +1,117 @@
-% analysis.tex
-
 \chapter{Analysis}
 \thispagestyle{chapterstart}
 
-\section{Methodology}
+In this chapter, we analyze the side-channel vulnerabilities inherent in the Dilithium lattice-based signature scheme and explore the countermeasures developed to mitigate these weaknesses. Our focus is on the feasibility and performance of side-channel resistant implementations on embedded devices, emphasizing the practical implications of these vulnerabilities and the effectiveness of the proposed countermeasures.
 
-In this chapter, we evaluate the side-channel resistance and performance of various masked implementations of the CRYSTALS-Dilithium digital signature scheme. Our methodology focuses on comparing key metrics across selected implementations to understand the trade-offs between security and efficiency, particularly in the context of embedded devices.
+\section{Overview}
 
-The main aspects considered are:
-
-\begin{itemize}
-    \item \textbf{Security Level}: The order of masking applied and robustness against side-channel attacks.
-    \item \textbf{Performance Metrics}: Execution time, cycle counts, and computational overhead introduced by the masking techniques.
-    \item \textbf{Feasibility on Embedded Devices}: Practicality of implementations on resource-constrained platforms.
-    \item \textbf{Implementation Techniques}: Specific masking schemes and optimizations employed to enhance security and performance.
-    \item \textbf{Trade-offs}: Balancing security requirements with performance constraints.
-\end{itemize}
-
-We base our analysis on key papers that have significantly contributed to side-channel resistant implementations of Dilithium.
-
-\section{Related Work}
-
-\subsection{Masking Dilithium: Efficient Implementation and Side-Channel Evaluation}
-
-Migliore et al.\ \cite{Migliore19} introduce a first-order masked implementation of Dilithium, focusing on efficient techniques suitable for embedded devices. They address the challenges of masking lattice-based operations and aim to minimize the performance overhead associated with side-channel countermeasures. The authors propose using a power-of-two modulus to simplify masking and improve efficiency without affecting security.
-
-\subsubsection{Security Level}
-
-The implementation targets first-order side-channel resistance by applying masking to sensitive variables. The authors identify the parts of the algorithm requiring protection, such as secret keys and intermediate computations involving these keys.
-
-\subsubsection{Performance Metrics}
-
-Key performance metrics reported include:
+The structure of this analysis is as follows:
 
 \begin{itemize}
-    \item \textbf{Execution Time}: The masked implementation introduces an overhead of approximately $5.6\times$ compared to the unmasked version.
-    \item \textbf{Cycle Counts}: Optimizations, including the use of a power-of-two modulus, reduce cycle counts for critical operations, improving performance.
+    \item \textbf{Side-Channel Vulnerabilities in Dilithium}: We examine specific vulnerabilities in the bit-unpacking function and the \ac{NTT} used during signature generation, highlighting how they can be exploited to recover secret keys.
+    \item \textbf{Initial Masking Techniques as Countermeasures}: We explore the initial masking techniques proposed to protect Dilithium against side-channel attacks, discussing their implementation and effectiveness.
+    \item \textbf{Subsequent Improvements}: We outline advancements made in masking techniques to enhance security and performance on embedded devices.
+    \item \textbf{Shuffling Techniques as Alternative Countermeasures}: We introduce shuffling as an alternative or complementary countermeasure, detailing its potential to mitigate side-channel vulnerabilities, particularly in the \ac{NTT}.
 \end{itemize}
 
-\subsubsection{Feasibility on Embedded Devices}
+\section{Side-Channel Vulnerabilities in Dilithium}
 
-The authors demonstrate that their first-order masked implementation is practical on embedded platforms. By using a power-of-two modulus, they achieve acceptable performance suitable for resource-constrained devices.
+Dilithium implementations are susceptible to side-channel attacks due to certain operations that leak sensitive information through physical channels like power consumption or electromagnetic emissions. Two significant vulnerabilities have been identified:
 
-\subsubsection{Implementation Techniques}
+\subsection{Leakage in the Bit-Unpacking Function}
 
-They employ specialized algorithms for masking polynomial arithmetic and optimize the implementation by minimizing non-linear operations that require costly masking. The key innovation is the use of a power-of-two modulus, simplifying the masking of decomposition functions and reducing complexity.
+One critical vulnerability arises from the bit-unpacking function used during signature generation. This function is responsible for converting a byte buffer into polynomial coefficients, specifically the random vector $y$, which is crucial in the computation of the signature.
 
-\subsection{Protecting Dilithium Against Leakage Revisited}
+Marzougui et al.~\cite{Marzougui22} identified that the bit-unpacking function leaks information due to differences in power consumption patterns when processing zero and non-zero coefficients. The unpacking process involves bitwise operations that vary depending on the value of the input bits. When a coefficient is zero, the function executes a different sequence of operations compared to when the coefficient is non-zero. These differences manifest as distinguishable patterns in power traces or electromagnetic emissions.
 
-Azouaoui et al.\ \cite{Azouaoui22} revisit the masking of Dilithium by performing a refined sensitivity analysis and introducing improved masking gadgets tailored to Dilithium. They identify flaws in previous analyses, such as that of Migliore et al., and propose corrections leading to more secure and efficient implementations.
+By capturing power traces during the execution of the bit-unpacking function, an attacker can apply statistical methods and machine learning techniques to classify the traces and determine whether each coefficient of $y$ is zero or non-zero. This classification can be done with high accuracy, even in the presence of noise, by training classifiers on a set of labeled traces obtained from a similar device under the attacker's control.
 
-\subsubsection{Security Level}
+\subsection{Leakage in the Number Theoretic Transform (NTT)}
 
-Their implementations support higher-order masking, providing security against side-channel attacks up to the eighth masking order ($d=8$). By accurately classifying the sensitivity of intermediate computations, they ensure that only necessary components are masked, avoiding insecurity due to unprotected variables and inefficiency from unnecessary masking.
+Another significant vulnerability is associated with the \ac{NTT}, a critical component in Dilithium for efficient polynomial multiplication. The \ac{NTT} implementation can introduce side-channel leakage due to its deterministic execution patterns and data dependencies.
 
-\subsubsection{Performance Metrics}
+Primas et al.~\cite{Primas17} and Pessl et al.~\cite{Pessl19} demonstrated that side-channel attacks targeting the \ac{NTT} can effectively compromise the security of lattice-based schemes like Dilithium. By analyzing power consumption during the execution of the \ac{NTT}, attackers can extract information about the secret polynomials used in the scheme.
 
-Performance improvements are achieved through:
+Specifically, these attacks exploit the fact that the \ac{NTT} involves arithmetic operations whose intermediate values depend on the secret data. The execution of butterfly operations within the \ac{NTT} can produce distinguishable patterns in power traces. By collecting a single trace and applying sophisticated analytical techniques, attackers can recover the secret key.
 
-\begin{itemize}
-    \item \textbf{Optimized Masking Gadgets}: Introduction of new gadgets specifically designed for Dilithium operations, leveraging advances in masking conversion algorithms.
-    \item \textbf{Randomized vs.\ Deterministic Signing}: Demonstrating that randomized signing can lead to significantly more efficient implementations when side-channel attacks are a concern.
-\end{itemize}
+\subsection{Exploitation for Secret Key Recovery}
 
-For first-order masking ($d=2$), their randomized implementation requires approximately 13.9 million cycles on an ARM Cortex-M4 microcontroller, significantly faster than the deterministic version.
+The leakage from both the bit-unpacking function and the \ac{NTT} becomes critical when considering how it can be exploited to recover the secret key component $s_1$.
 
-\subsubsection{Feasibility on Embedded Devices}
+\subsubsection{Exploiting Bit-Unpacking Function Leakage}
 
-The implementations are practical on embedded devices for various masking orders. The authors provide benchmarks on an ARM Cortex-M4, showing acceptable performance even at higher masking orders due to their optimized gadgets.
+In Dilithium, the signature is computed as $z = y + c s_1$, where $c$ is a known challenge value derived from the message and public parameters. Since $z$ and $c$ are known to the attacker, knowledge of $y$ allows the attacker to solve for $s_1$:
 
-\subsubsection{Implementation Techniques}
+\[
+    s_1 = \frac{z - y}{c}
+\]
 
-Key strategies include:
+By accurately determining which coefficients of $y$ are zero, the attacker gains partial information about $s_1$. Repeating this process over multiple signatures and leveraging linear algebra techniques, the attacker can construct a system of equations to solve for $s_1$ completely. Marzougui et al.~\cite{Marzougui22} demonstrated that with sufficient power traces and appropriate analytical methods, such as integer linear programming and least squares estimation, it is possible to recover $s_1$ and thus compromise the security of the scheme.
 
-\begin{itemize}
-    \item \textbf{Refined Sensitivity Analysis}: Re-examining the sensitivity of variables and operations, correcting previous misconceptions, and ensuring proper protection of sensitive variables.
-    \item \textbf{Improved Masking Gadgets}: Developing new gadgets dedicated to Dilithium's operations, such as bound checks and the decomposition function.
-    \item \textbf{PINI-Compliant Gadgets}: Utilizing \ac{PINI} compliant gadgets to ensure security and enable secure composition of masked operations.
-    \item \textbf{Randomized Signing}: Exploiting randomized signing over deterministic signing to achieve better performance and security against side-channel attacks.
-\end{itemize}
+\subsubsection{Exploiting \ac{NTT} Leakage}
 
-\subsection{Improved Gadgets for the High-Order Masking of Dilithium}
+The \ac{NTT}-related attacks focus on recovering secret polynomials used in the scheme by analyzing side-channel emissions during the \ac{NTT} computation. Since the \ac{NTT} is used to perform polynomial multiplication with secret inputs, leakage during its execution can reveal information about these secrets.
 
-Coron et al.\ \cite{Coron23} introduce a set of novel masking gadgets designed to improve the efficiency of high-order masking in the Dilithium signature scheme. Their work addresses key challenges in masking complex operations inherent in lattice-based cryptography, particularly focusing on reducing the computational overhead associated with high-order masking while ensuring robust security guarantees.
+Primas et al.~\cite{Primas17} utilized a single-trace attack where they modeled the \ac{NTT} as a factor graph and applied belief propagation algorithms to infer the secret data from side-channel observations. Pessl et al.~\cite{Pessl19} improved upon this by reducing the number of templates required and demonstrating the feasibility of the attack on embedded devices like the ARM Cortex-M4.
 
-\subsubsection{Security Level}
+By targeting specific operations within the \ac{NTT}, such as the butterfly computations, and exploiting the known structure and deterministic execution, attackers can reconstruct the secret polynomials with high accuracy.
 
-The proposed gadgets are tailored to achieve security against high-order side-channel attacks. Coron et al.\ provide formal security proofs in the $t$-probing model, which is a standard framework for analyzing the security of masked implementations against side-channel attacks. In this model, an adversary can probe up to $t$ intermediate variables during the computation, and the implementation is considered secure if these probes do not reveal any sensitive information about the secret keys.
+\section{Initial Masking Techniques as Countermeasures}
 
-Their gadgets are designed to be secure for any order $t$, with a particular focus on practical values of $t$ relevant for real-world applications. The formal proofs ensure that the masked operations do not introduce vulnerabilities that could be exploited by sophisticated attackers capable of higher-order attacks.
+To mitigate side-channel vulnerabilities in Dilithium, masking techniques split sensitive variables into multiple random shares, so each share individually reveals no information about the secret. This approach aims to decorrelate side-channel leakage from sensitive data.
 
-\subsubsection{Performance Metrics}
+Migliore et al.~\cite{Migliore19} presented an initial masking of Dilithium to protect against first-order side-channel attacks. They first identify sensitive operations, including the secret polynomials $s_1$ and $s_2$, the random vector $y$, and certain intermediate variables.
 
-A significant contribution of their work is the introduction of the \textbf{ShiftMod} gadget, which efficiently performs arithmetic shifts modulo $2q$. This gadget reduces the complexity of such operations, which are frequently used in the polynomial arithmetic of Dilithium.
+Arithmetic masking is applied to linear operations involving modular arithmetic, such as sampling $s_1$ and $s_2$ and polynomial multiplications. For non-linear operations and the random vector $y$, Boolean masking is used. This dual approach requires secure conversions between arithmetic and Boolean domains, implemented via algorithms that prevent leakage during conversion.
 
-Specifically, the ShiftMod gadget allows for:
+They designed specific masked gadgets for critical functions like polynomial multiplication, rejection sampling, and the decomposition function \texttt{Decompose$_q$}, ensuring security under the probing model. Generating high-quality randomness for shares and mask refreshing is essential for maintaining security.
 
-\begin{itemize}
-    \item \textbf{Lower Computational Complexity}: By optimizing the arithmetic shift operations, they reduce the number of required operations, leading to faster execution times.
-    \item \textbf{Scalability for Small Orders}: The performance improvements are particularly notable for small masking orders (e.g., $d \leq 6$), where the overhead is significantly reduced compared to previous implementations.
-\end{itemize}
+Overall, the initial masking techniques by Migliore et al.\ provide a foundation for protecting Dilithium against side-channel attacks. By carefully analyzing sensitive components and designing secure masked implementations, they demonstrate that achieving side-channel resistance in practical implementations of Dilithium is feasible, despite the inherent challenges.
 
-Additionally, they improve the \textbf{Boolean-to-Arithmetic Conversion} process, which is essential in masked implementations where values may need to be converted between different masking domains. Their method achieves lower operation counts for small $d$, making the overall implementation more efficient.
 
-However, they acknowledge that the complexity of their approach increases exponentially with the masking order $d$. As a result, while the gadgets provide substantial performance benefits for lower orders, the practicality diminishes for higher orders due to the exponential growth in computational requirements.
 
-\subsubsection{Feasibility on Embedded Devices}
+\section{Subsequent Improvements}
 
-For small masking orders, their implementation is feasible on embedded devices, offering improved performance without compromising security. The efficiency gains from the ShiftMod gadget and optimized conversion algorithms make the masked Dilithium implementation suitable for resource-constrained environments when high-order masking is not required.
+Following the initial masking techniques proposed to protect Dilithium against side-channel attacks, further research has focused on enhancing both the security and performance of masked implementations. Two significant contributions in this area are the works by Azouaoui et al.~\cite{Azouaoui22} and Coron et al.~\cite{Coron23}, which introduce refined sensitivity analyses and improved masking gadgets tailored for Dilithium.
 
-However, due to the exponential increase in complexity with higher masking orders, the implementation becomes less practical for embedded devices when $d$ is large. The computational and memory requirements may exceed the capabilities of typical embedded platforms, limiting the applicability of their approach in scenarios where very high security levels are mandated.
+\subsection{Revisited Sensitivity Analysis and Improved Implementations}
 
-\subsubsection{Implementation Techniques}
+Azouaoui et al.~\cite{Azouaoui22} revisited the sensitivity analysis of Dilithium's key generation and signing procedures to accurately determine which intermediate computations and variables require protection against side-channel leakage. Their analysis identified discrepancies in previous work, where some public or non-sensitive variables were unnecessarily protected, and certain sensitive variables were left unprotected.
 
-Coron et al.\ employ several innovative techniques to enhance the efficiency of the masked implementation:
+They emphasized the need to protect secret key components $s_1$ and $s_2$, as well as intermediate variables such as the random vector $y$ and the polynomial $w$ computed during signature generation. By clarifying that variables like the public key components, the challenge $c$, and the hint vector $h$ do not require side-channel protection after specific checks have passed, they enabled performance optimizations. Additionally, they identified that some variables previously considered sensitive, such as $w_1$ and $\tilde{r}$, can be safely left unprotected under certain conditions based on the zero-knowledge proofs and security reductions in Dilithium.
 
-\begin{itemize}
-    \item \textbf{ShiftMod Gadget}: This new gadget efficiently computes arithmetic shifts modulo $2q$ by leveraging properties of modular arithmetic and masking schemes. It reduces the number of required operations for shift computations, which are common in polynomial arithmetic and in functions like \texttt{Decompose}.
-    \item \textbf{Optimized Masking of \texttt{Decompose} Function}: They provide improved methods for masking the \texttt{Decompose} function, a critical component in Dilithium that splits polynomial coefficients into higher and lower bits. Their approach reduces the complexity of this operation, leading to better performance in the masked implementation.
-    \item \textbf{Efficient Conversion Algorithms}: The authors introduce optimized algorithms for converting between Boolean and arithmetic masking representations. These conversions are necessary in masked implementations to securely perform different types of operations, and their efficient algorithms reduce the overhead associated with these conversions.
-    \item \textbf{Security Proofs in the Probing Model}: By providing formal security proofs, they ensure that their masking techniques are sound and that the implementation is secure against attacks modeled in the $t$-probing framework. This adds confidence in the robustness of their approach.
-\end{itemize}
+Building on this refined sensitivity analysis, they developed improved masked implementations of Dilithium that leverage specialized masking gadgets. They introduced optimized gadgets tailored for Dilithium's specific operations, such as the \texttt{SecLeq}, \texttt{SecBoundCheck}, \texttt{SecSampleModp}, and \texttt{SecDecompose} functions. These gadgets are designed to be efficient and secure under the probing model, offering significant performance gains compared to previous masking techniques, particularly in polynomial arithmetic and rejection sampling. Furthermore, they demonstrated that the randomized version of Dilithium can lead to more efficient side-channel resistant implementations compared to the deterministic version when side-channel attacks are a concern.
 
-Their work builds upon previous research in high-order masking but focuses on tailoring the gadgets specifically for the operations used in Dilithium. By addressing the unique challenges posed by lattice-based cryptography, they contribute valuable tools for enhancing the side-channel resistance of post-quantum cryptographic schemes.
+\subsection{Novel High-Order Masking Gadgets}
 
+Coron et al.~\cite{Coron23} advanced side-channel countermeasures by introducing new high-order masking gadgets specifically designed for Dilithium. Their work addresses both security and efficiency challenges in implementing masked versions of Dilithium on embedded devices.
+
+A key contribution of their research is the development of the \texttt{ShiftMod} gadget, which enables efficient arithmetic shifts modulo any integer. This gadget is crucial for operations like arithmetic-to-Boolean masking conversion and improves the masking of the \texttt{Decompose} function in Dilithium. They also proposed a new algorithm for converting integers from Boolean to arithmetic masking modulo any integer $q$, with complexity independent of the bit size of the integer or modulus. This algorithm is particularly effective for generating the random vector $y$ in Dilithium. Moreover, they introduced enhanced techniques for masking the \texttt{Decompose} function, applicable across all security levels of Dilithium, offering better performance compared to previous approaches.
+
+Their implementation results demonstrated significant efficiency gains, with substantial reductions in execution times for critical operations, making high-order masked implementations of Dilithium more practical on embedded devices. They provided formal proofs of security for their gadgets in the $t$-probing model, ensuring robustness against high-order side-channel attacks. Additionally, they showed that their gadgets can be integrated into existing implementations, enhancing both security and performance without requiring substantial changes to the Dilithium algorithm.
+
+
+\section{Shuffling Techniques as Alternative Countermeasures}
+
+In addition to masking, shuffling techniques have been proposed as alternative or complementary countermeasures against side-channel attacks on the \ac{NTT} in Dilithium. Shuffling randomizes the order of operations to prevent attackers from correlating side-channel observations with specific computations, thus disrupting deterministic execution patterns.
+
+Ravi et al.~\cite{Ravi20} introduced shuffling countermeasures specifically targeting the \ac{NTT} to protect against single-trace side-channel attacks. Their methods include both coarse and fine shuffling techniques.
+
+
+\subsubsection{Coarse Shuffling}
+
+In Coarse-Full Shuffling, all butterfly operations within each stage of the \ac{NTT} are executed in a random order. This is achieved by generating a random permutation of the operations using algorithms like the Knuth-Yates shuffle. The entropy introduced by this method makes it infeasible for attackers to align side-channel observations with specific operations.
+
+Coarse In-Group Shuffling reduces the overhead by limiting the randomization to groups of butterflies that use the same twiddle factors. This reduces the amount of randomness needed and improves performance while still providing substantial protection.
+
+\subsubsection{Fine Shuffling}
+
+Basic Fine Shuffling focuses on randomizing the order of operand loading and storing within each butterfly operation. An arithmetic conditional swap is used to decide the order based on a random bit. This method is effective against attacks that target specific operand accesses.
+
+Bitwise Fine Shuffling enhances this by breaking down operations into single-bit manipulations, further obscuring the side-channel leakage. However, the increased computational complexity can significantly impact performance, especially on resource-constrained devices.
+
+\subsection{Effectiveness Against NTT-Based Attacks}
+
+Shuffling the \ac{NTT} operations disrupts the deterministic execution patterns exploited by attacks such as those by Primas et al.~\cite{Primas17} and Pessl et al.~\cite{Pessl19}. By randomizing computation order, shuffling makes it harder for attackers to map side-channel emissions to specific \ac{NTT} operations, reducing key recovery risks.
+
+Ravi et al.~\cite{Ravi20} evaluated their shuffling countermeasures on the ARM Cortex-M4 microcontroller, demonstrating that these techniques can be practically implemented on embedded devices. They also analyzed the performance overhead introduced by each shuffling method, providing insights into the trade-offs between security and efficiency.
