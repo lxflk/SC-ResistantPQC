@@ -66,7 +66,7 @@ Arithmetic masking is applied to linear operations involving modular arithmetic,
 
 They designed specific masked gadgets for critical functions like polynomial multiplication, rejection sampling, and the decomposition function \texttt{Decompose$_q$}, ensuring security under the probing model. Generating high-quality randomness for shares and mask refreshing is essential for maintaining security.
 
-Overall, the initial masking techniques by Migliore et al.\ provide a foundation for protecting Dilithium against side-channel attacks. By carefully analyzing sensitive components and designing secure masked implementations, they demonstrate that achieving side-channel resistance in practical implementations of Dilithium is feasible, despite the inherent challenges.
+Overall, the initial masking techniques by Migliore et al.\cite{Migliore19} provide a foundation for protecting Dilithium against side-channel attacks. By carefully analyzing sensitive components and designing secure masked implementations, they demonstrate that achieving side-channel resistance in practical implementations of Dilithium is feasible, despite the inherent challenges.
 
 
 
@@ -76,11 +76,11 @@ Following the initial masking techniques proposed to protect Dilithium against s
 
 \subsection{Revisited Sensitivity Analysis and Improved Implementations}
 
-Azouaoui et al.~\cite{Azouaoui22} revisited the sensitivity analysis of Dilithium's key generation and signing procedures to accurately determine which intermediate computations and variables require protection against side-channel leakage. Their analysis identified discrepancies in previous work, where some public or non-sensitive variables were unnecessarily protected, and certain sensitive variables were left unprotected.
+Azouaoui et al.~\cite{Azouaoui22} revisited the sensitivity analysis of Dilithium's key generation and signing procedures to accurately determine which intermediate computations and variables require protection against side-channel leakage. Their analysis identified discrepancies in previous work by Migliore et al.~\cite{Migliore19}, where some public or non-sensitive variables were unnecessarily protected, and certain sensitive variables were left unprotected.
 
 They emphasized the need to protect secret key components $s_1$ and $s_2$, as well as intermediate variables such as the random vector $y$ and the polynomial $w$ computed during signature generation. By clarifying that variables like the public key components, the challenge $c$, and the hint vector $h$ do not require side-channel protection after specific checks have passed, they enabled performance optimizations. Additionally, they identified that some variables previously considered sensitive, such as $w_1$ and $\tilde{r}$, can be safely left unprotected under certain conditions based on the zero-knowledge proofs and security reductions in Dilithium.
 
-Building on this refined sensitivity analysis, they developed improved masked implementations of Dilithium that leverage specialized masking gadgets. They introduced optimized gadgets tailored for Dilithium's specific operations, such as the \texttt{SecLeq}, \texttt{SecBoundCheck}, \texttt{SecSampleModp}, and \texttt{SecDecompose} functions. These gadgets are designed to be efficient and secure under the probing model, offering significant performance gains compared to previous masking techniques, particularly in polynomial arithmetic and rejection sampling. Furthermore, they demonstrated that the randomized version of Dilithium can lead to more efficient side-channel resistant implementations compared to the deterministic version when side-channel attacks are a concern.
+Building on this refined sensitivity analysis, they developed improved masked implementations of Dilithium that leverage specialized masking gadgets. They introduced optimized gadgets tailored for Dilithium's specific operations, such as the \texttt{SecLeq}, \texttt{SecBoundCheck}, \texttt{SecSampleModp}, and \texttt{SecDecompose} functions. These gadgets are designed to be efficient and secure under the probing security model, ensuring that any adversary observing up to $d-1$ shares learns no information about the secret variables.
 
 \subsection{Novel High-Order Masking Gadgets}
 
