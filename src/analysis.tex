@@ -110,7 +110,7 @@ Basic Fine Shuffling focuses on randomizing the order of operand loading and sto
 
 Bitwise Fine Shuffling enhances this by breaking down operations into single-bit manipulations, further obscuring the side-channel leakage. However, the increased computational complexity can significantly impact performance, especially on resource-constrained devices.
 
-\subsection{Effectiveness Against NTT-Based Attacks}
+\subsubsection{Effectiveness Against NTT-Based Attacks}
 
 Shuffling the \ac{NTT} operations disrupts the deterministic execution patterns exploited by attacks such as those by Primas et al.~\cite{Primas17} and Pessl et al.~\cite{Pessl19}. By randomizing computation order, shuffling makes it harder for attackers to map side-channel emissions to specific \ac{NTT} operations, reducing key recovery risks.
 

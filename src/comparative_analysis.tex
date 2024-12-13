@@ -12,9 +12,9 @@ Understanding the susceptibility of Dilithium implementations to side-channel at
     \renewcommand{\arraystretch}{1.2}
     \caption{Attack Surface Assessment of Unprotected Dilithium Implementations}
     \label{tab:attack_surface}
-    \begin{tabularx}{\textwidth}{|X|X|X|}
+    \begin{tabularx}{\textwidth}{|Y|Y|Y|}
         \hline
-        \textbf{Approach}                                             & \textbf{Evaluation Methodology}                        & \textbf{Findings}                                 \\ \hline
+        {\centering\textbf{Approach}\par}                             & {\centering\textbf{Evaluation Methodology}\par}        & {\centering\textbf{Findings}\par}                 \\ \hline
         Profiling attack on bit-unpacking function \cite{Marzougui22} & Machine learning profiling, integer linear programming & Full recovery of $s_1$ from 756,589 signatures    \\ \hline
         Side-channel attack on NTT \cite{Pessl19}                     & Single-trace analysis, factor graph modeling           & Secret key recovery from a single power trace     \\ \hline
         Leakage assessment \cite{Migliore19}                          & Welch's $t$-tests (500 traces), single-bit DPA         & Significant leakage detected with only 500 traces \\ \hline
@@ -38,13 +38,13 @@ Various countermeasures have been proposed to mitigate side-channel vulnerabilit
     \renewcommand{\arraystretch}{1.2}
     \caption{Evaluation of Side-Channel Countermeasures for Dilithium}
     \label{tab:countermeasures}
-    \begin{tabularx}{\textwidth}{|X|X|X|X|}
+    \begin{tabularx}{\textwidth}{|Y|Y|Y|Y|}
         \hline
-        \textbf{Countermeasure}                 & \textbf{Evaluation Methodology}                & \textbf{Security Framework}           & \textbf{Findings}                 \\ \hline
-        High-order masking \cite{Migliore19}    & Statistical tests on 10,000 traces             & $t$-probing security                  & No detectable leakage observed    \\ \hline
-        Randomized masking \cite{Azouaoui22}    & Sensitivity analysis, bitsliced implementation & Improved sensitivity analysis         & Enhanced leakage protection;      \\ \hline
-        Improved masking gadgets \cite{Coron23} & Simulations, formal proofs,                    & $t$-probing, $t$-NI, $t$-SNI security & Secure gadgets; higher overheads; \\ \hline
-        Shuffling techniques \cite{Ravi20}      & Practical evaluation on ARM Cortex-M4          & Randomization entropy metrics         & Reduced traceability;             \\ \hline
+        {\centering\textbf{Countermeasure}\par} & {\centering\textbf{Evaluation Methodology}\par} & {\centering\textbf{Security Framework}\par} & {\centering\textbf{Findings}\par} \\ \hline
+        High-order masking \cite{Migliore19}    & Statistical tests on 10,000 traces              & $t$-probing security                        & No detectable leakage observed    \\ \hline
+        Randomized masking \cite{Azouaoui22}    & Sensitivity analysis, bitsliced implementation  & Improved sensitivity analysis               & Enhanced leakage protection;      \\ \hline
+        Improved masking gadgets \cite{Coron23} & Simulations, formal proofs,                     & $t$-probing, $t$-NI, $t$-SNI security       & Secure gadgets; higher overheads; \\ \hline
+        Shuffling techniques \cite{Ravi20}      & Practical evaluation on ARM Cortex-M4           & Randomization entropy metrics               & Reduced traceability;             \\ \hline
     \end{tabularx}
 \end{table}
 
@@ -58,73 +58,7 @@ Ravi et al.~\cite{Ravi20} explored shuffling techniques on an ARM Cortex-M4 micr
 
 \section{Performance Impact of Countermeasures}
 
-Implementing side-channel countermeasures affects the performance of Dilithium operations, particularly key generation and signing. We analyze the execution time overhead introduced by different countermeasures, using the unprotected implementation as a baseline (normalized execution time of 1)\footnote{Normalized execution time is the ratio of the protected implementation's execution time to the unprotected implementation's, measuring the overhead of side-channel countermeasures.}.
-
-\subsubsection{Key Generation Performance}
-
-Figure~\ref{fig:keygen_performance} compares the normalized execution times for key generation with various countermeasures.
-
-\begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[
-                ybar,
-                bar width=10pt,
-                width=\textwidth,
-                height=10cm,
-                legend style={at={(0.5,1.05)},
-                        anchor=south,legend columns=-1},
-                symbolic x coords={
-                        Unprot.,
-                        MO-1,
-                        MO-2,
-                        MO-3,
-                        CFS,
-                        CIGS,
-                        BFS,
-                        BWS
-                    },
-                xtick=data,
-                ylabel={Normalized Execution Time (× Unprotected)},
-                xlabel={Implementation Type},
-                ymin=0,
-                ymax=15,
-                enlarge x limits=0.05,
-                x tick label style={font=\normalsize},
-                y tick label style={/pgf/number format/fixed},
-            ]
-            \addplot[blue,fill=blue] coordinates {
-                    (Unprot.,1)
-                    (MO-1,5.66)
-                    (MO-2,7.8)
-                    (MO-3,13.4)
-                    (CFS,0)
-                    (CIGS,0)
-                    (BFS,0)
-                    (BWS,0)
-                };
-
-            \addplot[red,fill=red] coordinates {
-                    (Unprot.,1)
-                    (MO-1,0)
-                    (MO-2,0)
-                    (MO-3,0)
-                    (CFS,1.221)
-                    (CIGS,1.203)
-                    (BFS,1.181)
-                    (BWS,2.971)
-                };
-
-            \legend{Migliore et al., Ravi et al.}
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Normalized execution time of Dilithium KeyGen for different implementations.}
-    \label{fig:keygen_performance}
-\end{figure}
-
-High-order masking, as implemented by Migliore et al.~\cite{Migliore19}, significantly increases execution time due to the overhead of securely processing multiple shares. For instance, masking order 1 (MO-1) increases execution time by approximately 5.66 times, while masking order 3 (MO-3) increases it to 13.4 times.
-
-In contrast, shuffling techniques evaluated by Ravi et al.~\cite{Ravi20} introduce moderate performance overheads. Coarse shuffling methods, such as Coarse-Full Shuffle (CFS) and Coarse In-Group Shuffle (CIGS), increase execution time by about 1.2 times. Bitwise Fine Shuffling (BWS) incurs a higher overhead of approximately 2.97 times due to its increased computational complexity.
+Implementing side-channel countermeasures in Dilithium directly influences its performance, especially in the signature generation phase. While key generation and other operations are also affected, the signing procedure is typically the most relevant metric for practical deployment. This is because key generation is often performed infrequently (e.g., only once per device or infrequently over the device's lifecycle), whereas signing may be executed repeatedly and under strict time constraints in real-world applications. Therefore, focusing on signing performance provides a more impactful and meaningful measure of how countermeasures affect the user experience and feasibility of deploying Dilithium on embedded platforms.
 
 \subsubsection{Signing Performance}
 
@@ -239,13 +173,13 @@ Figure~\ref{fig:combined_performance_updated} illustrates the normalized executi
     \label{fig:combined_performance_updated}
 \end{figure}
 
-Migliore et al.~\cite{Migliore19} observed that higher masking orders substantially increase signing execution time. MO-1 incurs approximately 5.68 times the execution time of the unprotected version, while MO-3 reaches 28.3 times.
+High-order masking, as implemented by Migliore et al.~\cite{Migliore19}, significantly increases execution time due to the overhead of securely processing multiple shares. For instance, masking order 1 (MO-1) incurs approximately 5.68 times the execution time of the unprotected version, while masking order 3 (MO-3) increases it to 28.3 times.
 
-Azouaoui et al.~\cite{Azouaoui22} achieved better performance with their randomized masking scheme, reducing the overhead at higher masking orders. For example, MO-2 incurs approximately 4.3 times the execution time of the unprotected implementation, benefiting from efficient randomness handling and optimized masking gadgets.
+Azouaoui et al.~\cite{Azouaoui22} introduced a more refined masking technique by enhancing sensitivity analysis and employing bitsliced implementations. Their randomized masking scheme reduced overheads, achieving better performance at higher masking orders. For example, at masking order 2 (MO-2), the overhead was reduced to approximately 4.3 times the unprotected implementation, compared to the higher overheads reported by Migliore et al.
 
-Coron et al.~\cite{Coron23} reported higher overheads, particularly at higher masking orders, with execution times increasing up to 208 times the unprotected version at MO-4. However, their implementation was a non-optimized proof-of-concept, and they anticipate significant performance improvements through optimizations.
+Coron et al.~\cite{Coron23} developed novel masking gadgets, including the ShiftMod gadget, which streamlined critical operations within Dilithium. Although their implementation serves as a proof-of-concept with higher overheads (e.g., MO-3 incurs a 28.0× slowdown), they anticipate significant performance improvements through architecture-specific optimizations and bitslicing techniques.
 
-Shuffling techniques generally incur lower performance overheads compared to masking. Ravi et al.~\cite{Ravi20} found that shuffling methods increased signing execution time by factors ranging from 1.18 to 5.06, depending on the granularity of shuffling.
+Shuffling techniques, as explored by Ravi et al.~\cite{Ravi20}, offer an alternative or complementary approach to masking. Their shuffling methods introduce randomness to the order of operations, effectively reducing traceability with lower performance overheads. For instance, Coarse-Full Shuffling (CFS) and Coarse In-Group Shuffling (CIGS) increase execution time by about 1.2 times, while Bitwise Fine Shuffling (BFS) incurs a higher overhead of approximately 5.06 times.
 
 \section{Discussion}
 
@@ -253,8 +187,6 @@ The comparative analysis reveals a trade-off between security and performance wh
 
 Optimized implementations, such as those by Azouaoui et al.~\cite{Azouaoui22}, demonstrate that performance penalties can be mitigated through careful design, bitslicing, and hardware-specific optimizations. By targeting critical operations and employing efficient masking gadgets, they achieved better performance at higher masking orders.
 
-Shuffling techniques offer a balance between security and performance. While they generally provide less robust security compared to high-order masking, they introduce lower overheads and can be effective against certain types of attacks, especially when combined with other countermeasures.
+Shuffling techniques offer a balance between security and performance. While they generally provide less robust security compared to high-order masking, they introduce lower overheads and can be effective against certain types of attacks, especially when combined with masking.
 
 Practitioners must consider specific security requirements, performance constraints, and hardware characteristics when selecting countermeasures. The choice between masking and shuffling, or a combination thereof, depends on the desired level of security and acceptable performance impact.
-
-Future research could explore hybrid approaches that integrate masking with shuffling or bitslicing to enhance both security and efficiency. Additionally, optimizing implementations for specific architectures and mitigating micro-architectural leakages remain important areas for development.

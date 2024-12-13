@@ -1,7 +1,7 @@
 % settings.tex
 
 \newcommand{\thauthor}{Luis Falke}
-\newcommand{\thtitle}{Side-Channel Resistant Implementations of Post-Quantum Cryptography}
+\newcommand{\thtitle}{A Comparative Analysis of Side-Channel Resistant Software Implementations of Dilithium}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -29,6 +29,10 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{multirow}
+\usepackage{array}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\renewcommand{\tabularxcolumn}[1]{m{#1}} % Added to allow vertical centering in X columns
 
 \renewcommand{\thetable}{\arabic{table}}
 \renewcommand{\thefigure}{\arabic{figure}}
