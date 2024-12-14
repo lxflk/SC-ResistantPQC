@@ -1,16 +1,32 @@
 \chapter{Conclusion}
 \thispagestyle{chapterstart}
 
-The secure deployment of post-quantum cryptographic (PQC) schemes like CRYSTALS-Dilithium on embedded devices is essential in the face of advancing quantum computing capabilities. However, practical implementations are susceptible to side-channel attacks due to inherent vulnerabilities, such as those in the bit-unpacking function and the Number Theoretic Transform (NTT).
+\section{Summary of Findings}
 
-In this paper, we analyzed the feasibility and performance of side-channel resistant implementations of Dilithium on embedded devices. We identified key vulnerabilities that can be exploited to recover secret keys and examined various countermeasures, including masking techniques and shuffling methods.
+This paper has provided an extensive examination of side-channel resistant implementations of the CRYSTALS-Dilithium signature scheme on embedded devices. We began by highlighting the imminent transition towards post-quantum cryptographic (PQC) standards, driven by the rising threat of quantum computing. Within this context, ensuring that PQC schemes—like Dilithium—can be securely and efficiently deployed on resource-constrained hardware is both timely and imperative.
 
-Our comparative analysis showed that high-order masking offers strong protection against side-channel attacks under rigorous security models like the $t$-probing model. However, such techniques often incur substantial performance overheads, particularly in non-optimized implementations. Optimizing these implementations through architecture-specific techniques, such as bitslicing, can mitigate performance penalties and make them more practical for resource-constrained environments.
+Our analysis revealed that Dilithium, despite its theoretical resilience against quantum adversaries, is susceptible to a range of side-channel attacks when implemented on embedded platforms. Notably, functions such as the bit-unpacking process and the Number Theoretic Transform (NTT) exhibit intrinsic vulnerabilities that allow attackers to infer secret information by analyzing power consumption, electromagnetic emissions, or other physical signals. This underscores the necessity of implementing robust countermeasures to mitigate such leakages.
 
-Shuffling techniques and optimized masking methods provide a more favorable balance between security and efficiency. Shuffling introduces randomness to operation sequences, reducing predictability and side-channel leakage with lower performance impact. Optimized masking schemes, as demonstrated by Azouaoui et al. \cite{Azouaoui22}, enhance performance by focusing on critical operations and employing efficient gadgets.
+We surveyed and evaluated several protection strategies, with particular attention to masking and shuffling techniques. While higher-order masking schemes demonstrate substantial resistance to side-channel analysis, they also introduce significant computational overhead, which can be prohibitive in real-world embedded environments. In contrast, shuffling approaches, or suitably optimized masking frameworks, often present a more balanced compromise between security and performance. Through the use of refined sensitivity analyses, bitsliced implementations, and the design of innovative masking gadgets, recent research has shown that performance penalties can be mitigated without sacrificing the robustness of the underlying security guarantees.
 
-Selecting appropriate countermeasures requires careful consideration of security requirements, performance constraints, and hardware characteristics. Practitioners should balance the desired level of side-channel resistance with acceptable performance overheads, tailoring implementations to their specific applications.
+\section{Implications for Practice}
 
-Future work should focus on developing hybrid approaches that combine masking with shuffling or bitslicing to achieve both high security and efficiency. Further optimization of implementations for specific architectures, mitigation of micro-architectural leakages, and exploration of alternative security models can enhance the practicality of side-channel resistant PQC schemes.
+For practitioners and system designers, our comparative analysis offers clear guidance. Decisions about which countermeasures to employ must account for the security requirements of the target application, available computational resources, and acceptable performance trade-offs. While no single technique emerges as a universally optimal solution, combining multiple approaches—such as layering shuffling techniques over a carefully selected masking scheme—can yield robust, context-sensitive defenses against side-channel adversaries.
 
-In conclusion, enhancing side-channel resistance is crucial for the secure adoption of PQC schemes in the quantum era. By carefully selecting and optimizing countermeasures, it is possible to implement practical and secure Dilithium on embedded devices. Ongoing research and development are essential to address the challenges of side-channel attacks and to ensure the robustness of cryptographic implementations against evolving threats.
+Moreover, this research emphasizes the importance of continuous refinement and verification. It is not sufficient to rely solely on theoretical models or isolated security proofs; rigorous experimental evaluations on representative embedded platforms are essential. Such an empirical approach ensures that solutions remain effective in practice, rather than merely on paper.
+
+\section{Directions for Future Research}
+
+The ongoing standardization efforts by NIST and others will guide the adoption of PQC schemes in the coming years. As these algorithms become entrenched in practical applications, the need for increasingly sophisticated side-channel protections will only intensify. Future work should focus on:
+
+\begin{itemize}
+    \item \textbf{Hybrid Countermeasures}: Exploring new combinations of masking, shuffling, bitslicing, and other techniques to reduce overhead while retaining strong security guarantees.
+    \item \textbf{Architecture-Specific Optimizations}: Tailoring implementations to the microarchitectural features of emerging embedded systems can enhance both performance and security, ensuring that countermeasures are well-aligned with the device’s capabilities.
+    \item \textbf{Extended Attack Models}: Addressing micro-architectural and fault-injection attacks, which extend beyond traditional side-channel leakage, to create even more resilient implementations.
+\end{itemize}
+
+\section{Final Remarks}
+
+The transition to the quantum era calls for cryptographic solutions that remain secure under new, more powerful adversarial models. While Dilithium and other PQC schemes offer theoretical security against quantum attacks, their safe deployment on embedded devices depends critically on effective, pragmatic side-channel resistance. This paper’s findings underscore that although challenges remain—particularly concerning performance overheads—ongoing research, improved methodologies, and careful engineering hold the promise of surmounting these obstacles.
+
+In conclusion, the secure, efficient implementation of Dilithium on embedded platforms is achievable with informed strategy, rigorous optimization, and a commitment to addressing emerging threats. Such efforts will be integral to ensuring the reliability and trustworthiness of post-quantum cryptography in the decades to come.
